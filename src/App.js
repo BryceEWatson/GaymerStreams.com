@@ -30,6 +30,11 @@ import DebugLog from './Utils/DebugLog';
 import FirebaseUtil from './Utils/InitializeFirebase';
 
 class App extends Component {
+  constructor(){
+    super();
+    this.onAddGaymerFormSubmit = this.onAddGaymerFormSubmit.bind(this);
+  }
+
   componentDidMount(){
 
     FirebaseUtil.init();
@@ -61,6 +66,10 @@ class App extends Component {
     this.unsubscribe();
   }
 
+  onAddGaymerFormSubmit(formData){
+    DebugLog('onAddGaymerFormSubmit',formData);
+  }
+
   render() {
 
 
@@ -69,7 +78,7 @@ class App extends Component {
 
         <AppHeader></AppHeader>
 
-        <AddGaymerForm/>
+        <AddGaymerForm onAddGaymerFormSubmit={this.onAddGaymerFormSubmit}/>
 
         <GamesList/>
 

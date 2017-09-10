@@ -20,6 +20,7 @@ const initialState = {
   gameFilter: GameFilters.SORT_BY_MOST_VIEWERS
 }
 
+
 /*
  * reduces gaymersForSelectedGame
  */

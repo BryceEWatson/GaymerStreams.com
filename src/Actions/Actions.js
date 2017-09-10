@@ -1,7 +1,6 @@
 /**
  * action types
  */
-
 export const ADD_GAYMER = 'ADD_TODO';
 export const GET_ALL_GAMES = 'GET_ALL_GAMES';
 export const GET_LIVE_GAMES = 'GET_LIVE_GAMES';

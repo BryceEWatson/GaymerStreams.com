@@ -7,6 +7,7 @@ import './App.css';
 import AppHeader from './Views/AppHeader';
 import AddGaymerForm from './Views/AddGaymerForm';
 import GamesList from './Views/GamesList';
+import Gaymers from './Views/Gaymers';
 
 /*
  * Redux
@@ -22,19 +23,31 @@ import {
 } from './Actions/Actions';
 import GaymerBearsAppReducer from './Reducers/Reducers';
 
+/*
+ * Utils
+ */
+import DebugLog from './Utils/DebugLog';
+import FirebaseUtil from './Utils/InitializeFirebase';
 
 class App extends Component {
+  componentDidMount(){
 
-  render() {
+    FirebaseUtil.init();
 
-    let store = createStore(GaymerBearsAppReducer);
+    FirebaseUtil.getFirebase().database().ref('fakeData').once('value').then((snap) => {
+      DebugLog('snap', snap);
+    });
+
+    this.store = createStore(GaymerBearsAppReducer);
     // Log the initial state
-    console.log('store',store.getState());
+    console.log('store',this.store.getState());
 
     // Every time the state changes, log it
     // Note that subscribe() returns a function for unregistering the listener
-    let unsubscribe = store.subscribe(() =>
-      console.log('unsubscribe',store.getState())
+    this.unsubscribe = this.store.subscribe(() =>
+      //FIXME: remove this on
+
+      DebugLog('unsubscribe', this.store.getState())
     );
     //
     // store.dispatch(addGaymer('mockGaymerId', 'Twitch'));
@@ -42,6 +55,14 @@ class App extends Component {
     // store.dispatch(getLiveGames());
 
     // unsubscribe();
+  }
+
+  componentWillUnmount(){
+    this.unsubscribe();
+  }
+
+  render() {
+
 
     return (
       <div className="App">
@@ -51,6 +72,8 @@ class App extends Component {
         <AddGaymerForm/>
 
         <GamesList/>
+
+        <Gaymers/>
       </div>
     );
   }

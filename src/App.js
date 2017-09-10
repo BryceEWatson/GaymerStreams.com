@@ -14,7 +14,9 @@ import Gaymers from './Views/Gaymers';
  */
 import { createStore } from 'redux';
 import {
-  addGaymer,
+  addGaymerRequest,
+  addGaymerFailure,
+  addGaymerSuccess,
   getAllGames,
   getLiveGames,
   getGaymersForGame,
@@ -55,7 +57,7 @@ class App extends Component {
       DebugLog('unsubscribe', this.store.getState())
     );
     //
-    // store.dispatch(addGaymer('mockGaymerId', 'Twitch'));
+    // store.dispatch(addGaymer('mockGaymerName', 'Twitch'));
     // store.dispatch(getAllGames());
     // store.dispatch(getLiveGames());
 
@@ -69,7 +71,7 @@ class App extends Component {
   onAddGaymerFormSubmit(formData){
     DebugLog('onAddGaymerFormSubmit',formData);
 
-    this.store.dispatch(addGaymer(formData.gaymerId, formData.streamPlatform || 'Twitch'));
+    this.store.dispatch(addGaymerRequest(formData.gaymerName, formData.streamPlatform || 'Twitch'));
   }
 
   render() {

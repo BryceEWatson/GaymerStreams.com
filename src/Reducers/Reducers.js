@@ -2,7 +2,9 @@ import fetch from 'isomorphic-fetch'
 import { combineReducers } from 'redux';
 
 import {
-  ADD_GAYMER,
+  ADD_GAYMER_REQUEST,
+  ADD_GAYMER_FAILURE,
+  ADD_GAYMER_SUCCESS,
   GET_ALL_GAMES,
   GET_LIVE_GAMES,
   GET_GAYMERS_FOR_GAME,

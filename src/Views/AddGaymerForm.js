@@ -11,21 +11,33 @@ class AddGaymerForm extends Component {
     console.log('handleSubmit', this.streamPlatform);
     e.preventDefault();
     var formData = {
-      gaymerId: this.gaymerId.value,
+      gaymerName: this.gaymerName.value,
       streamPlatform: this.streamPlatform.value,
     };
     this.props.onAddGaymerFormSubmit(formData);
   }
 
   render(){
+
+    let addFormResult;
+    if (this.props.hasError){
+      addFormResult = <p>Sorry, there was an error</p>;
+    } else if (this.props.isFetching){
+      addFormResult = <p>Processing...</p>;
+    } else if (this.props.isSuccess) {
+      addFormResult = <p>{this.gaymerName} successfully added</p>;
+    } else {
+      addFormResult = '';
+    }
+
     return (
       <section className="AddGaymerForm">
         <form onSubmit={this.handleSubmit}>
           <fieldset>
             <legend>Add a Gaymer Bear Streamer</legend>
 
-            <label htmlFor="gaymerId">Tag/Username</label>
-            <input id="gaymerId" type="text" ref={(gaymerId) => this.gaymerId = gaymerId} required/>
+            <label htmlFor="gaymerName">Tag/Username</label>
+            <input id="gaymerName" type="text" ref={(gaymerName) => this.gaymerName = gaymerName} required/>
 
             <input id="streamPlatformTwitch" type="radio" name="streamPlatform" value="Twitch" ref={(twitch) =>
                 {
@@ -46,7 +58,9 @@ class AddGaymerForm extends Component {
           </fieldset>
         </form>
 
-        <div className="AddFormResult">this.props.addGaymerFormResult</div>
+        <div className="AddFormResult">
+          {addFormResult}
+        </div>
       </section>
     )
   }

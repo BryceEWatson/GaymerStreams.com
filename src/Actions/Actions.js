@@ -1,7 +1,11 @@
 /**
  * action types
  */
-export const ADD_GAYMER = 'ADD_GAYMER';
+export const ADD_GAYMER_REQUEST = 'ADD_GAYMER_REQUEST';
+export const ADD_GAYMER_FAILURE = 'ADD_GAYMER_FAILURE';
+export const ADD_GAYMER_SUCCESS = 'ADD_GAYMER_SUCCESS';
+
+
 export const GET_ALL_GAMES = 'GET_ALL_GAMES';
 export const GET_LIVE_GAMES = 'GET_LIVE_GAMES';
 export const GET_GAYMERS_FOR_GAME = 'GET_GAYMERS_FOR_GAME';
@@ -21,13 +25,37 @@ export const GameFilters = {
  */
 
 /*
- * generates the ADD_GAYMER action
+ * generates the ADD_GAYMER_REQUEST action
  */
-export function addGaymer(gaymerId, streamPlatform){
+export function addGaymerRequest(gaymerId, streamPlatform){
   return {
-    type: ADD_GAYMER,
+    type: ADD_GAYMER_REQUEST,
     gaymerId,
     streamPlatform
+  }
+}
+
+/*
+ * generates the ADD_GAYMER_FAILURE action
+ */
+export function addGaymerFailure(gaymerId, streamPlatform, error){
+  return {
+    type: ADD_GAYMER_FAILURE,
+    gaymerId,
+    streamPlatform,
+    error
+  }
+}
+
+/*
+ * generates the ADD_GAYMER_SUCCESS action
+ */
+export function addGaymerSuccess(gaymerId, streamPlatform, response){
+  return {
+    type: ADD_GAYMER_SUCCESS,
+    gaymerId,
+    streamPlatform,
+    response
   }
 }
 

@@ -47,16 +47,16 @@ it('renders without crashing', () => {
  * TEST REDUX ACTIONS
  */
 
- describe('Actions: ADD_GAYMER', () => {
+ describe('Actions: ADD_GAYMER_REQUEST', () => {
   it('should create an action to add a gaymer', () => {
     const gaymerId = 'mockGaymerId';
     const streamPlatform = 'mockStreamPlatform';
     const expectedAction = {
-      type: Actions.ADD_GAYMER,
+      type: Actions.ADD_GAYMER_REQUEST,
       gaymerId,
       streamPlatform
     }
-    expect(Actions.addGaymer(gaymerId, streamPlatform)).toEqual(expectedAction)
+    expect(Actions.addGaymerRequest(gaymerId, streamPlatform)).toEqual(expectedAction)
   })
 })
 

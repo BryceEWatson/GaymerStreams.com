@@ -1,3 +1,4 @@
+import fetch from 'isomorphic-fetch'
 import { combineReducers } from 'redux';
 
 import {
@@ -18,6 +19,43 @@ const initialState = {
   allGamesList: [],
   liveGamesList: [],
   gameFilter: GameFilters.SORT_BY_MOST_VIEWERS
+}
+
+/*
+ * reduces gaymersForSelectedGame
+ */
+export function addGaymer(state = '', action){
+  console.log('addGaymer GOT HERE');
+  // TODO: Implement
+  // For now, don't handle any actions and just return the state given to us.
+
+  //translate userName to Id
+  var twitchName = action.gaymerId;
+
+  fetch(`https://api.twitch.tv/kraken/users?login=${twitchName}`,
+    {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/vnd.twitchtv.v5+json',
+        'Client-ID': '4ab0ef4dut3ngrm4ercp9ue54k58d5'
+      }
+    })
+    .then(
+      response => response.json(),
+      // Do not use catch, because that will also catch
+      // any errors in the dispatch and resulting render,
+      // causing an loop of 'Unexpected batch number' errors.
+      // https://github.com/facebook/react/issues/6895
+      error => console.log('An error occured.', error)
+    )
+    .then(json =>
+      // We can dispatch many times!
+      // Here, we update the app state with the results of the API call.
+
+      console.log('RESPONSE', json)
+      // dispatch(receivePosts(subreddit, json))
+    );
+  return state;
 }
 
 
@@ -45,8 +83,8 @@ export function selectedGame(state = 'Overwatch', action){
  * reduces allGamesList
  */
 export function allGamesList(state = [], action){
-  console.log('allGamesList reducer state:', state);
-  console.log('allGamesList reducer action:', action);
+  // console.log('allGamesList reducer state:', state);
+  // console.log('allGamesList reducer action:', action);
 
   switch (action.type){
     case GET_ALL_GAMES:
@@ -84,6 +122,7 @@ export function gameFilter(state = GameFilters.SORT_BY_MOST_VIEWERS, action){
  * root reducer
  */
 const GaymerBearsAppReducer = combineReducers({
+  addGaymer,
   gaymersForSelectedGame,
   selectedGame,
   allGamesList,

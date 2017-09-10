@@ -39,9 +39,9 @@ class App extends Component {
 
     FirebaseUtil.init();
 
-    FirebaseUtil.getFirebase().database().ref('fakeData').once('value').then((snap) => {
-      DebugLog('snap', snap);
-    });
+    // FirebaseUtil.getFirebase().database().ref('fakeData').once('value').then((snap) => {
+    //   DebugLog('snap', snap);
+    // });
 
     this.store = createStore(GaymerBearsAppReducer);
     // Log the initial state
@@ -68,6 +68,8 @@ class App extends Component {
 
   onAddGaymerFormSubmit(formData){
     DebugLog('onAddGaymerFormSubmit',formData);
+
+    this.store.dispatch(addGaymer(formData.gaymerId, formData.streamPlatform || 'Twitch'));
   }
 
   render() {

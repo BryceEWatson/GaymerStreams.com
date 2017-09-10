@@ -8,6 +8,7 @@ class AddGaymerForm extends Component {
   }
 
   handleSubmit(e){
+    console.log('handleSubmit', this.streamPlatform);
     e.preventDefault();
     var formData = {
       gaymerId: this.gaymerId.value,
@@ -26,10 +27,19 @@ class AddGaymerForm extends Component {
             <label htmlFor="gaymerId">Tag/Username</label>
             <input id="gaymerId" type="text" ref={(gaymerId) => this.gaymerId = gaymerId} required/>
 
-            <input id="streamPlatformTwitch" type="radio" name="streamPlatform" value="Twitch" ref={(streamPlatform) => this.streamPlatform = streamPlatform} required/>
+            <input id="streamPlatformTwitch" type="radio" name="streamPlatform" value="Twitch" ref={(twitch) =>
+                {
+                  console.log(twitch);
+                  this.streamPlatform = twitch
+                }
+              } required/>
             <label htmlFor="streamPlatformTwitch">Twitch</label>
 
-            <input id="streamPlatformXBOX" type="radio" name="streamPlatform" value="XBOX" ref={(streamPlatform) => this.streamPlatform = streamPlatform}/>
+            <input id="streamPlatformXBOX" type="radio" name="streamPlatform" value="XBOX" ref={(xbox) =>
+              {
+                console.log(xbox);
+                this.streamPlatform = xbox
+              }}/>
             <label htmlFor="streamPlatformXBOX">XBOX</label>
 
             <input type="submit" value="Submit"/>

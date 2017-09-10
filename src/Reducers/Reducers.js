@@ -82,7 +82,7 @@ export function gameFilter(state = GameFilters.SORT_BY_MOST_VIEWERS, action){
 /*
  * root reducer
  */
-const gaymerBearsApp = combineReducers({
+const GaymerBearsAppReducer = combineReducers({
   gaymersForSelectedGame,
   selectedGame,
   allGamesList,
@@ -90,4 +90,4 @@ const gaymerBearsApp = combineReducers({
   gameFilter
 });
 
-export default gaymerBearsApp;
+export default GaymerBearsAppReducer;

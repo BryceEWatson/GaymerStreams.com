@@ -1,8 +1,17 @@
 import React, { Component } from 'react';
+import './App.css';
 
-// redux
+/*
+ * Views
+ */
+import AppHeader from './Views/AppHeader';
+import AddGaymerForm from './Views/AddGaymerForm';
+import GamesList from './Views/GamesList';
+
+/*
+ * Redux
+ */
 import { createStore } from 'redux';
-import gaymerBearsApp from './Reducers/Reducers';
 import {
   addGaymer,
   getAllGames,
@@ -11,14 +20,14 @@ import {
   setSelectedGame,
   setGameFilter
 } from './Actions/Actions';
+import GaymerBearsAppReducer from './Reducers/Reducers';
 
-import './App.css';
 
 class App extends Component {
 
   render() {
 
-    let store = createStore(gaymerBearsApp);
+    let store = createStore(GaymerBearsAppReducer);
     // Log the initial state
     console.log('store',store.getState());
 
@@ -27,23 +36,21 @@ class App extends Component {
     let unsubscribe = store.subscribe(() =>
       console.log('unsubscribe',store.getState())
     );
+    //
+    // store.dispatch(addGaymer('mockGaymerId', 'Twitch'));
+    // store.dispatch(getAllGames());
+    // store.dispatch(getLiveGames());
 
-    store.dispatch(addGaymer('mockGaymerId', 'Twitch'));
-    store.dispatch(getAllGames());
-    store.dispatch(getLiveGames());
-
-    unsubscribe();
+    // unsubscribe();
 
     return (
       <div className="App">
 
-        <header className="App-header">
-          <h2>Welcome to React</h2>
-        </header>
+        <AppHeader></AppHeader>
 
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+        <AddGaymerForm/>
+
+        <GamesList/>
       </div>
     );
   }

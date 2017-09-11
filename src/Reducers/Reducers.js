@@ -6,7 +6,10 @@ import {
   ADD_GAYMER_FAILURE,
   ADD_GAYMER_SUCCESS,
   GET_ALL_GAMES,
-  GET_LIVE_GAMES,
+  GET_TWITCH_LIVE_STREAMS,
+  GET_TWITCH_LIVE_STREAMS_REQUEST,
+  GET_TWITCH_LIVE_STREAMS_FAILURE,
+  GET_TWITCH_LIVE_STREAMS_SUCCESS,
   // GET_GAYMERS_FOR_GAME,
   // SET_SELECTED_GAME,
   SET_GAME_FILTER,
@@ -111,12 +114,35 @@ export function allGamesList(state = [], action){
 }
 
 /*
- * reduces liveGamesList
+ * reduces twitchLiveStreamsList
  */
-export function liveGamesList(state = [], action){
+export function twitchLiveStreamsList(state = {
+    isFetching: false,
+    status: undefined,
+    isSuccess: false,
+    liveStreams: [],
+    game: undefined
+  }, action){
   switch (action.type){
-    case GET_LIVE_GAMES:
-      return ['liveGame1', 'liveGame2']; //FIXME: MOCK
+    case GET_TWITCH_LIVE_STREAMS:
+    case GET_TWITCH_LIVE_STREAMS_REQUEST:
+      return Object.assign({}, state, {
+        isFetching: true,
+        status: action.status,
+        game: action.game
+      });
+    case GET_TWITCH_LIVE_STREAMS_FAILURE:
+      return Object.assign({}, state, {
+        status: action.status,
+        game: action.game
+      });
+    case GET_TWITCH_LIVE_STREAMS_SUCCESS:
+      return Object.assign({}, state, {
+        status: action.status,
+        isSuccess: true,
+        liveStreams: action.liveStreams,
+        game: action.game
+      });
     default:
       return state;
   }
@@ -143,7 +169,7 @@ const GaymerBearsAppReducer = combineReducers({
   gaymersForSelectedGame,
   selectedGame,
   allGamesList,
-  liveGamesList,
+  twitchLiveStreamsList,
   gameFilter
 });
 

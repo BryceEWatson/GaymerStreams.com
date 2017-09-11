@@ -2,12 +2,33 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 
+
+// REDUX
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import GaymerBearsAppReducer from './Reducers/Reducers';
+import { createLogger } from 'redux-logger';
+import thunkMiddleware from 'redux-thunk';
+
+
 /*
  * REACT DOM TESTS
  */
+
+let store = createStore(
+ GaymerBearsAppReducer,
+ applyMiddleware(
+   thunkMiddleware, // lets us dispatch() functions
+   createLogger() // neat middleware that logs actions
+ )
+);
+
 it('renders without crashing', () => {
   const div = document.createElement('div');
-  ReactDOM.render(<App />, div);
+  ReactDOM.render(
+    <Provider store={store}>
+      <App />
+    </Provider>, div);
 });
 
 /*
@@ -49,27 +70,46 @@ it('renders without crashing', () => {
 
  describe('Actions: ADD_GAYMER', () => {
   it('should create an action to add a gaymer', () => {
-    const gaymerId = 'mockGaymerId';
+    const gaymerName = 'mockGaymerName';
     const streamPlatform = 'mockStreamPlatform';
     const expectedAction = {
-      type: Actions.ADD_GAYMER_REQUEST,
-      gaymerId,
+      type: Actions.ADD_GAYMER,
+      gaymerName,
       streamPlatform
     }
-    expect(Actions.addGaymer(gaymerId, streamPlatform)).toEqual(expectedAction)
+    expect(Actions.addGaymer(gaymerName, streamPlatform)).toEqual(expectedAction)
   })
 })
 
 describe('Actions: ADD_GAYMER_REQUEST', () => {
- it('should create an action to add a gaymer', () => {
-   const gaymerId = 'mockGaymerId';
+ it('should create an action to add a gaymer via network request', () => {
+   const status = 'Adding Gaymer...';
+   const gaymerName = 'mockGaymerName';
    const streamPlatform = 'mockStreamPlatform';
    const expectedAction = {
      type: Actions.ADD_GAYMER_REQUEST,
-     gaymerId,
+     status,
+     gaymerName,
      streamPlatform
    }
-   expect(Actions.addGaymerRequest(gaymerId, streamPlatform)).toEqual(expectedAction)
+   expect(Actions.addGaymerRequest(gaymerName, streamPlatform)).toEqual(expectedAction)
+ })
+})
+
+describe('Actions: ADD_GAYMER_SUCCESS', () => {
+ it('should create an action to signify success in addition of gaymer', () => {
+   const status = 'Gaymer added successfully';
+   const gaymerName = 'mockGaymerName';
+   const streamPlatform = 'mockStreamPlatform';
+   const gaymerId = 'mockGaymerId';
+   const expectedAction = {
+     type: Actions.ADD_GAYMER_SUCCESS,
+     status,
+     streamPlatform,
+     gaymerName,
+     gaymerId
+   }
+   expect(Actions.addGaymerSuccess(gaymerName, gaymerId, streamPlatform)).toEqual(expectedAction)
  })
 })
 
@@ -83,13 +123,34 @@ describe('Actions', () => {
 })
 
 
-describe('Actions', () => {
+describe('Actions GET_TWITCH_LIVE_STREAMS', () => {
  it('should create an action to get live games', () => {
-   const expectedAction = {
-     type: Actions.GET_LIVE_GAMES
+   const status = 'Retrieving live Twitch streams... ';
+   const game = 'Overwatch';
+   const channelIds = 'mockChannelId1,mockChannelId2';
+   const expectedAction =  {
+     type: Actions.GET_TWITCH_LIVE_STREAMS,
+     status,
+     game,
+     channelIds
    }
-   expect(Actions.getLiveGames()).toEqual(expectedAction)
+   expect(Actions.getTwitchLiveStreams(game, channelIds)).toEqual(expectedAction)
  })
+})
+
+describe('Actions GET_TWITCH_LIVE_STREAMS_REQUEST', () => {
+  it('should create an action to get live streams', () => {
+    const status = 'Retrieving live Twitch streams... ';
+    const game = 'Overwatch';
+    const channelIds = 'mockChannelId1,mockChannelId2';
+    const expectedAction =  {
+      type: Actions.GET_TWITCH_LIVE_STREAMS_REQUEST,
+      status,
+      game,
+      channelIds
+    }
+    expect(Actions.getTwitchLiveStreamsRequest(game, channelIds)).toEqual(expectedAction)
+  })
 })
 
 describe('Actions', () => {
@@ -118,14 +179,6 @@ describe('Actions', () => {
  * TEST REDUX REDUCERS
  */
 import * as AppReducer from './Reducers/Reducers';
-
- const mockInitialState = {
-   gaymersForSelectedGame: [],
-   selectedGame: 'Overwatch',
-   allGamesList: [],
-   liveGamesList: [],
-   gameFilter: Actions.GameFilters.SORT_BY_MOST_VIEWERS
- }
 
  describe('Reducer', () => {
   it('should return the initial state', () => {
@@ -172,25 +225,102 @@ describe('Reducer allGamesList', () => {
  })
 })
 
-describe('Reducer liveGamesList', () => {
- it('should return the initial state', () => {
-   const action = {
-     type: undefined
-   }
-   expect(AppReducer.liveGamesList(undefined, action)).toEqual(
-     []
-   )
- })
 
- it('should return a new state', () => {
-   const action = {
-     type: Actions.GET_LIVE_GAMES
-   }
-   expect(AppReducer.liveGamesList(undefined, action)).toEqual(
-     ['liveGame1', 'liveGame2']
-   )
- })
+describe('Reducer GET_TWITCH_LIVE_STREAMS', () => {
+  it('should return a new state', () => {
+    const status = 'Retrieving live Twitch streams... ';
+    const game = 'Overwatch';
+    const channelIds = 'mock1,mock2';
+    const action = {
+      type: Actions.GET_TWITCH_LIVE_STREAMS,
+      status,
+      game,
+      channelIds
+    };
+    expect(AppReducer.twitchLiveStreamsList(undefined, action)).toEqual(
+      {
+        isFetching: true,
+        status,
+        isSuccess: false,
+        liveStreams: [],
+        game
+      }
+    )
+  })
 })
+
+describe('Reducer GET_TWITCH_LIVE_STREAMS_REQUEST', () => {
+  it('should return a new state', () => {
+    const status = 'Retrieving live Twitch streams... ';
+    const game = 'Overwatch';
+    const channelIds = 'mock1,mock2';
+    const action = {
+      type: Actions.GET_TWITCH_LIVE_STREAMS_REQUEST,
+      status,
+      game,
+      channelIds
+    };
+    expect(AppReducer.twitchLiveStreamsList(undefined, action)).toEqual(
+      {
+        isFetching: true,
+        status,
+        isSuccess: false,
+        liveStreams: [],
+        game
+      }
+    )
+  })
+})
+
+describe('Reducer GET_TWITCH_LIVE_STREAMS_FAILURE', () => {
+  it('should return a new state', () => {
+    const status = 'Error getting Twitch live streams... ';
+    const game = 'Overwatch';
+    const channelIds = 'mock1,mock2';
+    const action = {
+      type: Actions.GET_TWITCH_LIVE_STREAMS_FAILURE,
+      status,
+      game,
+      channelIds
+    };
+    expect(AppReducer.twitchLiveStreamsList(undefined, action)).toEqual(
+      {
+        isFetching: false,
+        status,
+        isSuccess: false,
+        liveStreams: [],
+        game
+      }
+    )
+  })
+})
+
+
+describe('Reducer GET_TWITCH_LIVE_STREAMS_SUCCESS', () => {
+  it('should return a new state', () => {
+    const status = 'Successfully retrieved live streams.';
+    const game = 'Overwatch';
+    const channelIds = 'mock1,mock2';
+    const liveStreams = ['liveStream1', 'liveStream2'];
+    const action = {
+      type: Actions.GET_TWITCH_LIVE_STREAMS_SUCCESS,
+      status: 'Successfully retrieved live streams.',
+      liveStreams,
+      game,
+      channelIds
+    };
+    expect(AppReducer.twitchLiveStreamsList(undefined, action)).toEqual(
+      {
+        isFetching: false,
+        status,
+        isSuccess: true,
+        liveStreams,
+        game
+      }
+    )
+  })
+})
+
 
 
 describe('Reducer gameFilters', () => {

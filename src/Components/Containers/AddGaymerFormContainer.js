@@ -16,9 +16,9 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-const StatusAddGaymerForm = connect(
+const AddGaymerFormContainer = connect(
   mapStateToProps,
   mapDispatchToProps
 )(AddGaymerForm)
 
-export default StatusAddGaymerForm;
+export default AddGaymerFormContainer;

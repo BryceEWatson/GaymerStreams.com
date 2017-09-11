@@ -1,10 +1,14 @@
 import { combineReducers } from 'redux';
 
 import {
-  ADD_GAYMER,
-  ADD_GAYMER_REQUEST,
-  ADD_GAYMER_FAILURE,
-  ADD_GAYMER_SUCCESS,
+  ADD_GAYMER, ADD_GAYMER_REQUEST, ADD_GAYMER_FAILURE, ADD_GAYMER_SUCCESS,
+
+  GET_GAYMERS, GET_GAYMERS_REQUEST, GET_GAYMERS_FAILURE, GET_GAYMERS_SUCCESS, GET_GAYMERS_EMPTY,
+
+  SET_GAMES, SET_GAMES_REQUEST, SET_GAMES_FAILURE, SET_GAMES_SUCCESS,
+
+  GET_GAMES, GET_GAMES_REQUEST, GET_GAMES_FAILURE, GET_GAMES_SUCCESS, GET_GAMES_EMPTY,
+
   GET_ALL_GAMES,
   GET_TWITCH_LIVE_STREAMS,
   GET_TWITCH_LIVE_STREAMS_REQUEST,
@@ -27,6 +31,12 @@ import {
 //     gaymerId: undefined,
 //     streamPlatform: 'Twitch'
 //   },
+//   getGaymers: {
+//     isFetching: false,
+//     isSuccess: false,
+//     status: undefined,
+//     gaymers: []
+//   }
 //
 //   gaymersForSelectedGame: [],
 //   selectedGame: 'Overwatch',
@@ -40,8 +50,8 @@ import {
  */
 export function addGaymer(state = {
   isFetching: false,
-  status: undefined,
   isSuccess: false,
+  status: undefined,
   streamPlatform: 'Twitch',
   gaymerName: undefined,
   gaymerId: undefined
@@ -68,6 +78,108 @@ export function addGaymer(state = {
         streamPlatform: action.streamPlatform,
         gaymerName: action.gaymerName,
         gaymerId: action.gaymerId
+      });
+    default:
+      return state;
+  }
+}
+
+
+/*
+ * reduces getGaymersRequest
+ */
+export function getGaymers(state = {
+  isFetching: false,
+  status: undefined,
+  isSuccess: false,
+  gaymers: []
+   }, action){
+
+  switch(action.type){
+    case GET_GAYMERS:
+    case GET_GAYMERS_REQUEST:
+      return Object.assign({}, state, {
+        isFetching: true,
+        status: action.status
+      });
+    case GET_GAYMERS_FAILURE:
+      return Object.assign({}, state, {
+        status: action.status
+      });
+    case GET_GAYMERS_SUCCESS:
+      return Object.assign({}, state, {
+        isSuccess: true,
+        status: action.status,
+        gaymers: action.gaymers
+      });
+    case GET_GAYMERS_EMPTY:
+      return Object.assign({}, state, {
+        isSuccess: true,
+        status: action.status
+      });
+    default:
+      return state;
+  }
+}
+
+/*
+ * reduces getGames
+ */
+export function getGames(state = {
+  isFetching: false,
+  status: undefined,
+  isSuccess: false,
+  games: []
+   }, action){
+
+  switch(action.type){
+    case GET_GAMES:
+    case GET_GAMES_REQUEST:
+      return Object.assign({}, state, {
+        isFetching: true,
+        status: action.status
+      });
+    case GET_GAMES_FAILURE:
+      return Object.assign({}, state, {
+        status: action.status
+      });
+    case GET_GAMES_SUCCESS:
+      return Object.assign({}, state, {
+        isSuccess: true,
+        status: action.status,
+        games: action.games
+      });
+    default:
+      return state;
+  }
+}
+
+/*
+ * reduces setGames
+ */
+export function setGames(state = {
+  isFetching: false,
+  status: undefined,
+  isSuccess: false,
+  games: []
+   }, action){
+
+  switch(action.type){
+    case SET_GAMES:
+    case SET_GAMES_REQUEST:
+      return Object.assign({}, state, {
+        isFetching: true,
+        status: action.status
+      });
+    case SET_GAMES_FAILURE:
+      return Object.assign({}, state, {
+        status: action.status
+      });
+    case SET_GAMES_SUCCESS:
+      return Object.assign({}, state, {
+        isSuccess: true,
+        status: action.status,
+        games: action.games
       });
     default:
       return state;
@@ -165,7 +277,8 @@ export function gameFilter(state = GameFilters.SORT_BY_MOST_VIEWERS, action){
  */
 const GaymerBearsAppReducer = combineReducers({
   addGaymer,
-
+  getGaymers,
+  getGames,
   gaymersForSelectedGame,
   selectedGame,
   allGamesList,

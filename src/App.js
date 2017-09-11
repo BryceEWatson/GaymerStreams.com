@@ -7,9 +7,10 @@ import './App.css';
  * Views
  */
 import AppHeader from './Components/AppHeader';
-import StatusAddGaymerForm from './Components/Containers/StatusAddGaymerForm';
-import GamesList from './Components/GamesList';
-import Gaymers from './Components/Gaymers';
+import AddGaymerFormContainer from './Components/Containers/AddGaymerFormContainer';
+import GamesListContainer from './Components/Containers/GamesListContainer';
+import LiveStreamsContainer from './Components/Containers/LiveStreamsContainer';
+import GaymersContainer from './Components/Containers/GaymersContainer';
 
 
 const App = () => (
@@ -17,11 +18,13 @@ const App = () => (
 
     <AppHeader></AppHeader>
 
-    <StatusAddGaymerForm />
+    <AddGaymerFormContainer />
 
-    <GamesList/>
+    <GamesListContainer/>
 
-    <Gaymers/>
+    <LiveStreamsContainer/>
+
+    <GaymersContainer/>
   </div>
 )
 

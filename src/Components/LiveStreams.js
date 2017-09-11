@@ -1,40 +1,24 @@
 import React from 'react';
 import DebugLog from '../Utils/DebugLog';
 
-
-const AddGaymerForm = ({ status, onFormSubmit }) => {
-
-  let gaymerName, streamPlatform;
+const LiveStreams = ({ status, liveStreams }) => {
 
   return (
-    <section className="AddGaymerFormSection">
-      <form onSubmit={e => {
-            e.preventDefault()
-            onFormSubmit(gaymerName.value, streamPlatform);
-          }
-        }>
-        <fieldset>
-          <legend>Add a Gaymer Bear Streamer</legend>
+    <section className="LiveStreamsSection">
 
-          <label htmlFor="gaymerName">Tag/Username</label>
-          <input id="gaymerName" type="text"
-            ref={node => {
-              gaymerName = node
-            }} required/>
+      <h2>Live Streams</h2>
+      <ul className="LiveStreams">
+        Streams currently live: {liveStreams.map(stream => (
+          <li>
+            Game: {stream.game} <br/>
+            Name: {stream.channel.display_name} <br/>
+            Stream title: {stream.channel.status}<br/>
+            <img src={stream.preview.medium}/>
+          </li>
+        ))}
+      </ul>
 
-          <input id="streamPlatformTwitch" type="radio" name="streamPlatform" value="Twitch"
-            onChange={(e) => streamPlatform = e.target.value} required/>
-          <label htmlFor="streamPlatformTwitch">Twitch</label>
-
-          <input id="streamPlatformXBOX" type="radio" name="streamPlatform" value="XBOX"
-            onChange={(e) => streamPlatform = e.target.value}/>
-          <label htmlFor="streamPlatformXBOX">XBOX</label>
-
-          <input type="submit" value="Submit"/>
-        </fieldset>
-      </form>
-
-      <div className="AddGaymerFormStatus">
+      <div className="LiveStreamsStatus">
         Status: {status}
       </div>
     </section>
@@ -99,4 +83,4 @@ const AddGaymerForm = ({ status, onFormSubmit }) => {
 //   }
 // }
 
-export default AddGaymerForm;
+export default LiveStreams;

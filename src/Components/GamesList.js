@@ -1,15 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const GamesList = ({gamesList}) => (
-  <section className="GamesList">
+const GamesList = ({ status, games }) => (
+
+  <section className="Games">
     <h2>Games</h2>
-    Games List Goes Here
+
+    <ul>
+      {games.map(game => (
+        <li>
+          {game}
+        </li>
+      ))}
+    </ul>
+
+    <div class="GamesStatus">Status: {status}</div>
   </section>
 )
 
 GamesList.propTypes = {
-  gamesList: PropTypes.array
+  games: PropTypes.array
 }
 
 export default GamesList;

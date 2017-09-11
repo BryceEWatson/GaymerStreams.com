@@ -1,10 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Gaymers = ({gaymers}) => (
-  <section className="Gaymers">
+const Gaymers = ({ status, gaymers }) => (
+
+  <section className="GaymersSection">
+
     <h2>Gaymers</h2>
-    Gaymers Goes Here
+
+    <ul className="Gaymers">
+      {gaymers.map(gaymer => (
+        <li>
+          Gaymer Name: {gaymer.gaymerName}<br/>
+        </li>
+      ))}
+    </ul>
+
+    <div className="GaymersStatus">
+      Status: {status}
+    </div>
   </section>
 )
 

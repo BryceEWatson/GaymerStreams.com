@@ -1,5 +1,6 @@
 import FirebaseUtil from '../Utils/InitializeFirebase';
 import DebugLog from '../Utils/DebugLog';
+import { difference, union } from 'lodash';
 
 
 var twitchApiGetOptions = {
@@ -25,12 +26,23 @@ export const GET_GAYMERS = 'GET_GAYMERS';
 export const GET_GAYMERS_REQUEST = 'GET_GAYMERS_REQUEST';
 export const GET_GAYMERS_FAILURE = 'GET_GAYMERS_FAILURE';
 export const GET_GAYMERS_SUCCESS = 'GET_GAYMERS_SUCCESS';
+export const GET_GAYMERS_EMPTY = 'GET_GAYMERS_EMPTY';
 
 export const GET_TWITCH_LIVE_STREAMS = 'GET_TWITCH_LIVE_STREAMS';
 export const GET_TWITCH_LIVE_STREAMS_REQUEST = 'GET_TWITCH_LIVE_STREAMS_REQUEST';
 export const GET_TWITCH_LIVE_STREAMS_FAILURE = 'GET_TWITCH_LIVE_STREAMS_FAILURE';
 export const GET_TWITCH_LIVE_STREAMS_SUCCESS = 'GET_TWITCH_LIVE_STREAMS_SUCCESS';
 
+export const SET_GAMES = 'SET_GAMES';
+export const SET_GAMES_REQUEST = 'SET_GAMES_REQUEST';
+export const SET_GAMES_FAILURE = 'SET_GAMES_FAILURE';
+export const SET_GAMES_SUCCESS = 'SET_GAMES_SUCCESS';
+
+export const GET_GAMES = 'GET_GAMES';
+export const GET_GAMES_REQUEST = 'GET_GAMES_REQUEST';
+export const GET_GAMES_FAILURE = 'GET_GAMES_FAILURE';
+export const GET_GAMES_SUCCESS = 'GET_GAMES_SUCCESS';
+export const GET_GAMES_EMPTY = 'GET_GAMES_EMPTY';
 
 export const GET_ALL_GAMES = 'GET_ALL_GAMES';
 export const GET_GAYMERS_FOR_GAME = 'GET_GAYMERS_FOR_GAME';
@@ -90,11 +102,11 @@ export const GameFilters = {
           }
 
           //check if gaymer already exists before writing
-          FirebaseUtil.getFirebase().database().ref('gaymers/'+ twitchName + json.users[0]._id).once('value').then(function(gaymerSnap){
+          FirebaseUtil.getFirebase().database().ref('gaymers/'+ twitchName.toLowerCase() + json.users[0]._id).once('value').then(function(gaymerSnap){
             if(gaymerSnap.val()){
               dispatch(addGaymerFailure(twitchName, 'Twitch', 'Gaymer already added'));
             } else {
-              FirebaseUtil.getFirebase().database().ref('gaymers/'+ twitchName + json.users[0]._id).set(gaymer, function(pushErr){
+              FirebaseUtil.getFirebase().database().ref('gaymers/'+ twitchName.toLowerCase() + json.users[0]._id).set(gaymer, function(pushErr){
                 if (pushErr){
                   dispatch(addGaymerFailure(twitchName, 'Twitch', pushErr))
                 } else {
@@ -118,40 +130,42 @@ export function fetchGaymers() {
     // First dispatch: the app state is updated to inform
     // that the API call is starting.
 
-    dispatch(getGaymersRequest())
+    dispatch(getGaymersRequest());
 
-    // The function called by the thunk middleware can return a value,
-    // that is passed on as the return value of the dispatch method.
-
-    // In this case, we return a promise to wait for.
-    // This is not required by thunk middleware, but it is convenient for us.
-
-    FirebaseUtil.getFirebase().database().ref('gaymers').on('value', function(gaymersSnap){
+    return FirebaseUtil.getFirebase().database().ref('gaymers').on('value', (gaymersSnap) => {
       let gaymersSnapshot = gaymersSnap.val();
       DebugLog('fetchGaymers', gaymersSnapshot);
 
       if (gaymersSnapshot){
-        var channelIds = extractChannelIdsAsString(gaymersSnapshot);
-        DebugLog('channelIds', channelIds);
-        dispatch(fetchTwitchLiveStreams(undefined, channelIds));
+        dispatch(getGaymersSuccess(Object.values(gaymersSnapshot)));
+        dispatch(fetchTwitchLiveStreams(undefined, extractChannelIdsAsString(gaymersSnapshot)));
+      } else {
+        dispatch(getGaymersEmpty());
       }
+    }, (err) => {
+      dispatch(getGaymersFailure(err));
     });
   }
 }
 
-function extractChannelIdsAsString(gaymersObj){
-  var arr = [];
-
-  for (let k in gaymersObj){
-    if (gaymersObj.hasOwnProperty(k)){
-      let gaymer = gaymersObj[k];
-      if (gaymer.hasOwnProperty('channelId')){
-        arr.push(gaymer['channelId']);
-      }
-    }
+/*
+ * fetch games
+ */
+export function fetchGames() {
+  return function (dispatch) {
+    dispatch(getGamesRequest());
+    return FirebaseUtil.getFirebase().database().ref('games').on('value', (gamesSnap) => {
+        let gamesSnapshot = gamesSnap.val();
+        DebugLog('gamesSnapshot', gamesSnapshot);
+        if (gamesSnapshot){
+          dispatch(getGamesSuccess(Object.values(gamesSnapshot)));
+        } else {
+          dispatch(getGamesEmpty());
+        }
+      }, (err) => {
+      dispatch(getGamesFailure(err));
+    });
   }
-
-  return arr.join();
 }
 
 /*
@@ -192,10 +206,59 @@ export function fetchTwitchLiveStreams(game, channelIds) {
           }
       )
       .then((json) => {
-          DebugLog('fetchTwitchLiveStreams RESPONSE', json);
-          dispatch(getTwitchLiveStreamsSuccess(game, channelIds, json));
+          dispatch(getTwitchLiveStreamsSuccess(game, channelIds, json.streams));
+
+          let liveGamesSet = extractUniqueGamesFromTwitchStreams(json.streams);
+
+          if (liveGamesSet){
+            dispatch(storeGames(liveGamesSet));
+          }
         }
       );
+  }
+}
+
+
+
+/*
+ * Set games in database.
+ */
+export function storeGames(liveGames) {
+  return function (dispatch) {
+    console.log('setting unique games',liveGames);
+
+    dispatch(setGamesRequest());
+
+    if (liveGames){ //if there are any live games to record in database
+      FirebaseUtil.getFirebase().database().ref('games').once('value').then((gamesSnap) => {
+        let gamesSnapshot = gamesSnap.val();
+        DebugLog('setUniqueGames', gamesSnapshot);
+
+        let allGames;
+        if (gamesSnapshot){
+
+          let diff = difference(gamesSnapshot, liveGames); //compare liveGames and gamesSnapshot
+          DebugLog('diff length',diff.length);
+
+          if (diff.length > 0){ //arrays differ
+            DebugLog('difference detected!',liveGames);
+            allGames = union(Object.values(gamesSnapshot), liveGames); //merge arrays
+            allGames.sort(function(a,b){
+              return a.toLowerCase().localeCompare(b.toLowerCase()); //sort case-insensitive
+            });
+            FirebaseUtil.getFirebase().database().ref('games').set(allGames, function(err){ //only record if arrays are different
+              if (err){
+                DebugLog('err!',allGames);
+              } else {
+                dispatch(setGamesSuccess(allGames));
+              }
+            });
+          }
+        }
+      }).catch((err) => {
+        dispatch(setGamesFailure(err));
+      });
+    }
   }
 }
 
@@ -281,10 +344,21 @@ export function getGaymersFailure(error){
 /*
  * generates the GET_GAYMERS_SUCCESS action
  */
-export function getGaymersSuccess(){
+export function getGaymersSuccess(gaymers){
    return {
      type: GET_GAYMERS_SUCCESS,
-     status: 'Gaymers retrieved successfully.'
+     status: 'Gaymers retrieved successfully.',
+     gaymers
+   }
+}
+
+/*
+ * generates the GET_GAYMERS_EMPTY action
+ */
+export function getGaymersEmpty(){
+   return {
+     type: GET_GAYMERS_EMPTY,
+     status: 'No gaymers online.'
    }
 }
 
@@ -339,6 +413,99 @@ export function getTwitchLiveStreamsSuccess(game, channelIds, liveStreams){
 }
 
 /*
+ * generates the SET_GAMES action
+ */
+export function setGames(){
+  return {
+    type: SET_GAMES,
+    status: 'Recording games in database... '
+  }
+}
+
+/*
+ * generates the SET_GAMES_REQUEST action
+ */
+export function setGamesRequest(){
+  return {
+    type: SET_GAMES_REQUEST,
+    status: 'Recording games in database... '
+  }
+}
+
+/*
+ * generates the SET_GAMES_FAILURE action
+ */
+export function setGamesFailure(error){
+  return {
+    type: SET_GAMES_FAILURE,
+    status: error
+  }
+}
+
+/*
+ * generates the SET_GAMES_SUCCESS action
+ */
+export function setGamesSuccess(games){
+  return {
+    type: SET_GAMES_SUCCESS,
+    status: 'Successfully recorded unique games in database.',
+    games
+  }
+}
+
+/*
+ * generates the GET_GAMES action
+ */
+export function getGames(){
+  return {
+    type: GET_GAMES,
+    status: 'Retrieving games... '
+  }
+}
+
+/*
+ * generates the GET_GAMES_REQUEST action
+ */
+export function getGamesRequest(){
+  return {
+    type: GET_GAMES_REQUEST,
+    status: 'Retrieving games... '
+  }
+}
+
+/*
+ * generates the GET_GAMES_FAILURE action
+ */
+export function getGamesFailure(error){
+  return {
+    type: GET_GAMES_FAILURE,
+    status: error
+  }
+}
+
+/*
+ * generates the GET_GAMES_SUCCESS action
+ */
+export function getGamesSuccess(games){
+  return {
+    type: GET_GAMES_SUCCESS,
+    status: 'Successfully retrieved games.',
+    games
+  }
+}
+
+/*
+ * generates the GET_GAMES_EMPTY action
+ */
+export function getGamesEmpty(){
+  return {
+    type: GET_GAMES,
+    status: 'No games.'
+  }
+}
+
+
+/*
  * generates the GET_GAYMERS_FOR_GAME action
  */
 export function getGaymersForGame(game){
@@ -376,4 +543,29 @@ export function getAllGames(){
   return {
     type: GET_ALL_GAMES
   }
+}
+
+
+
+function extractChannelIdsAsString(gaymersObj){
+  var arr = [];
+
+  for (let k in gaymersObj){
+    if (gaymersObj.hasOwnProperty(k)){
+      let gaymer = gaymersObj[k];
+      if (gaymer.hasOwnProperty('channelId')){
+        arr.push(gaymer['channelId']);
+      }
+    }
+  }
+
+  return arr.join();
+}
+
+function extractUniqueGamesFromTwitchStreams(streams){
+  var set = new Set();
+  for (let k = 0; k < streams.length; k+=1){
+    set.add(streams[k].game);
+  }
+  return Array.from(set);
 }

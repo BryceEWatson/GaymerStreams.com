@@ -66,9 +66,11 @@ export const GameFilters = {
           }
       )
       .then((json) => {
+          DebugLog('fetchTwitchIdFromName RESPONSE', json);
+
           let gaymer = {
             streamPlatform: 'Twitch',
-            gaymerId: json.users[0]._id,
+            channelId: json.users[0]._id,
             gaymerName: twitchName
           }
 

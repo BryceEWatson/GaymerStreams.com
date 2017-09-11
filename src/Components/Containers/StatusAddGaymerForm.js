@@ -11,7 +11,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     onFormSubmit: (gaymerName, streamPlatform) => {
-
       dispatch(fetchTwitchIdFromName(gaymerName, streamPlatform))
     }
   }

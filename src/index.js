@@ -7,6 +7,7 @@ import { createStore, applyMiddleware } from 'redux';
 import GaymerBearsAppReducer from './Reducers/Reducers';
 import { createLogger } from 'redux-logger';
 import thunkMiddleware from 'redux-thunk';
+import { fetchGaymers } from './Actions/Actions';
 
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
@@ -22,7 +23,11 @@ let store = createStore(
   )
 );
 
+// .then(()=> store.dispatch(fetchTwitchLiveStreams());
+
 FirebaseUtil.init();
+
+store.dispatch(fetchGaymers());
 
 
 ReactDOM.render(

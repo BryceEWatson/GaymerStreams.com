@@ -21,7 +21,10 @@ export const ADD_GAYMER_REQUEST = 'ADD_GAYMER_REQUEST';
 export const ADD_GAYMER_FAILURE = 'ADD_GAYMER_FAILURE';
 export const ADD_GAYMER_SUCCESS = 'ADD_GAYMER_SUCCESS';
 
-export const GET_ALL_GAMES = 'GET_ALL_GAMES';
+export const GET_GAYMERS = 'GET_GAYMERS';
+export const GET_GAYMERS_REQUEST = 'GET_GAYMERS_REQUEST';
+export const GET_GAYMERS_FAILURE = 'GET_GAYMERS_FAILURE';
+export const GET_GAYMERS_SUCCESS = 'GET_GAYMERS_SUCCESS';
 
 export const GET_TWITCH_LIVE_STREAMS = 'GET_TWITCH_LIVE_STREAMS';
 export const GET_TWITCH_LIVE_STREAMS_REQUEST = 'GET_TWITCH_LIVE_STREAMS_REQUEST';
@@ -29,6 +32,7 @@ export const GET_TWITCH_LIVE_STREAMS_FAILURE = 'GET_TWITCH_LIVE_STREAMS_FAILURE'
 export const GET_TWITCH_LIVE_STREAMS_SUCCESS = 'GET_TWITCH_LIVE_STREAMS_SUCCESS';
 
 
+export const GET_ALL_GAMES = 'GET_ALL_GAMES';
 export const GET_GAYMERS_FOR_GAME = 'GET_GAYMERS_FOR_GAME';
 export const SET_SELECTED_GAME = 'SET_SELECTED_GAME';
 export const SET_GAME_FILTER = 'SET_GAME_FILTER';
@@ -86,7 +90,7 @@ export const GameFilters = {
           }
 
           //check if gaymer already exists before writing
-          FirebaseUtil.getFirebase().database().ref('gaymers/'+ twitchName + json.users[0]._id).once('value', function(gaymerSnap){
+          FirebaseUtil.getFirebase().database().ref('gaymers/'+ twitchName + json.users[0]._id).once('value').then(function(gaymerSnap){
             if(gaymerSnap.val()){
               dispatch(addGaymerFailure(twitchName, 'Twitch', 'Gaymer already added'));
             } else {
@@ -98,6 +102,8 @@ export const GameFilters = {
                 }
               });
             }
+          }).catch(function(err){
+            dispatch(addGaymerFailure(twitchName, 'Twitch', err));
           });
         }
       );
@@ -105,7 +111,30 @@ export const GameFilters = {
 }
 
 /*
- * request live streams given channel ids and game
+ * fetch gaymers
+ */
+export function fetchGaymers() {
+  return function (dispatch) {
+    // First dispatch: the app state is updated to inform
+    // that the API call is starting.
+
+    dispatch(getGaymersRequest())
+
+    // The function called by the thunk middleware can return a value,
+    // that is passed on as the return value of the dispatch method.
+
+    // In this case, we return a promise to wait for.
+    // This is not required by thunk middleware, but it is convenient for us.
+
+    FirebaseUtil.getFirebase().database().ref('gaymers').on('value', function(gaymersSnap){
+      console.log('gaymersSnap', gaymersSnap);
+    });
+  }
+}
+
+/*
+ * request live streams given channel ids and game.
+ * If no games is specified, then live streams are retrieved based on channelIds
  */
 export function fetchTwitchLiveStreams(game, channelIds) {
   return function (dispatch) {
@@ -197,13 +226,46 @@ export function addGaymerSuccess(gaymerName, gaymerId, streamPlatform){
 }
 
 /*
- * generates the GET_ALL_GAMES action
+ * generates the GET_GAYMERS action
  */
-export function getAllGames(){
-  return {
-    type: GET_ALL_GAMES
-  }
+export function getGaymers(){
+   return {
+     type: GET_GAYMERS,
+     status: 'Retrieving gaymers...'
+   }
 }
+
+
+/*
+ * generates the GET_GAYMERS_REQUEST action
+ */
+export function getGaymersRequest(){
+   return {
+     type: GET_GAYMERS_REQUEST,
+     status: 'Retrieving gaymers...'
+   }
+}
+
+/*
+ * generates the GET_GAYMERS_FAILURE action
+ */
+export function getGaymersFailure(error){
+   return {
+     type: GET_GAYMERS_FAILURE,
+     status: error
+   }
+}
+
+/*
+ * generates the GET_GAYMERS_SUCCESS action
+ */
+export function getGaymersSuccess(){
+   return {
+     type: GET_GAYMERS_SUCCESS,
+     status: 'Gaymers retrieved successfully.'
+   }
+}
+
 
 /*
  * generates the GET_LIVE_STREAMS action
@@ -281,5 +343,15 @@ export function setGameFilter(filter){
   return {
     type: SET_GAME_FILTER,
     filter
+  }
+}
+
+
+/*
+ * generates the GET_ALL_GAMES action
+ */
+export function getAllGames(){
+  return {
+    type: GET_ALL_GAMES
   }
 }

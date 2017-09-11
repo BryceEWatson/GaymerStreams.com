@@ -10,7 +10,7 @@ const AddGaymerForm = ({ status, onFormSubmit }) => {
     <section className="AddGaymerForm">
       <form onSubmit={e => {
             e.preventDefault()
-            onFormSubmit(gaymerName.value, streamPlatform);
+            onFormSubmit(gaymerName.value.toLowerCase(), streamPlatform);
           }
         }>
         <fieldset>

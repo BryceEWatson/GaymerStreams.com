@@ -10,7 +10,7 @@ var FirebaseUtil = {
       storageBucket: "gaymerbears-52f4d.appspot.com",
       messagingSenderId: "372385646334"
     };
-    firebase.initializeApp(config);
+    firebase.initializeApp(config); //synchronous
   },
 
   getFirebase: function(){

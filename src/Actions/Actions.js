@@ -127,9 +127,31 @@ export function fetchGaymers() {
     // This is not required by thunk middleware, but it is convenient for us.
 
     FirebaseUtil.getFirebase().database().ref('gaymers').on('value', function(gaymersSnap){
-      console.log('gaymersSnap', gaymersSnap);
+      let gaymersSnapshot = gaymersSnap.val();
+      DebugLog('fetchGaymers', gaymersSnapshot);
+
+      if (gaymersSnapshot){
+        var channelIds = extractChannelIdsAsString(gaymersSnapshot);
+        DebugLog('channelIds', channelIds);
+        dispatch(fetchTwitchLiveStreams(undefined, channelIds));
+      }
     });
   }
+}
+
+function extractChannelIdsAsString(gaymersObj){
+  var arr = [];
+
+  for (let k in gaymersObj){
+    if (gaymersObj.hasOwnProperty(k)){
+      let gaymer = gaymersObj[k];
+      if (gaymer.hasOwnProperty('channelId')){
+        arr.push(gaymer['channelId']);
+      }
+    }
+  }
+
+  return arr.join();
 }
 
 /*

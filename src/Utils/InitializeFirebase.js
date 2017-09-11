@@ -12,7 +12,7 @@ var FirebaseUtil = {
     };
     firebase.initializeApp(config);
   },
-  
+
   getFirebase: function(){
     return firebase;
   }

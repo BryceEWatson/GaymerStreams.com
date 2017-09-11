@@ -1,95 +1,84 @@
-import React, { Component } from 'react';
+
+
+import React from 'react';
 import './App.css';
 
 /*
  * Views
  */
-import AppHeader from './Views/AppHeader';
-import AddGaymerForm from './Views/AddGaymerForm';
-import GamesList from './Views/GamesList';
-import Gaymers from './Views/Gaymers';
-
-/*
- * Redux
- */
-import { createStore } from 'redux';
-import {
-  addGaymerRequest,
-  addGaymerFailure,
-  addGaymerSuccess,
-  getAllGames,
-  getLiveGames,
-  getGaymersForGame,
-  setSelectedGame,
-  setGameFilter
-} from './Actions/Actions';
-import GaymerBearsAppReducer from './Reducers/Reducers';
-
-/*
- * Utils
- */
-import DebugLog from './Utils/DebugLog';
-import FirebaseUtil from './Utils/InitializeFirebase';
-
-class App extends Component {
-  constructor(){
-    super();
-    this.onAddGaymerFormSubmit = this.onAddGaymerFormSubmit.bind(this);
-  }
-
-  componentDidMount(){
-
-    FirebaseUtil.init();
-
-    // FirebaseUtil.getFirebase().database().ref('fakeData').once('value').then((snap) => {
-    //   DebugLog('snap', snap);
-    // });
-
-    this.store = createStore(GaymerBearsAppReducer);
-    // Log the initial state
-    console.log('store',this.store.getState());
-
-    // Every time the state changes, log it
-    // Note that subscribe() returns a function for unregistering the listener
-    this.unsubscribe = this.store.subscribe(() =>
-      //FIXME: remove this on
-
-      DebugLog('unsubscribe', this.store.getState())
-    );
-    //
-    // store.dispatch(addGaymer('mockGaymerName', 'Twitch'));
-    // store.dispatch(getAllGames());
-    // store.dispatch(getLiveGames());
-
-    // unsubscribe();
-  }
-
-  componentWillUnmount(){
-    this.unsubscribe();
-  }
-
-  onAddGaymerFormSubmit(formData){
-    DebugLog('onAddGaymerFormSubmit',formData);
-
-    this.store.dispatch(addGaymerRequest(formData.gaymerName, formData.streamPlatform || 'Twitch'));
-  }
-
-  render() {
+import AppHeader from './Components/AppHeader';
+import StatusAddGaymerForm from './Components/Containers/StatusAddGaymerForm';
+import GamesList from './Components/GamesList';
+import Gaymers from './Components/Gaymers';
 
 
-    return (
-      <div className="App">
+const App = () => (
+  <div className="App">
 
-        <AppHeader></AppHeader>
+    <AppHeader></AppHeader>
 
-        <AddGaymerForm onAddGaymerFormSubmit={this.onAddGaymerFormSubmit}/>
+    <StatusAddGaymerForm />
 
-        <GamesList/>
+    <GamesList/>
 
-        <Gaymers/>
-      </div>
-    );
-  }
-}
+    <Gaymers/>
+  </div>
+)
+
+// class App extends Component {
+//   constructor(){
+//     super();
+//     this.onAddGaymerFormSubmit = this.onAddGaymerFormSubmit.bind(this);
+//   }
+//
+//   componentDidMount(){
+//     this.store = createStore(
+//       GaymerBearsAppReducer,
+//       applyMiddleware(
+//         thunkMiddleware, // lets us dispatch() functions
+//         createLogger() // neat middleware that logs actions
+//       )
+//     );
+//
+//     // FIXME: Remove below in production
+//     this.unsubscribe = this.store.subscribe(() =>
+//       DebugLog('logging state', this.store.getState()) //Every time the state changes, log it
+//     );
+//
+//     this.store.dispatch(initializeFirebase());
+//   }
+//
+//   componentWillUnmount(){
+//     this.unsubscribe();
+//   }
+//
+//   onAddGaymerFormSubmit(formData){
+//     DebugLog('onAddGaymerFormSubmit',formData);
+//     var store = this.store;
+//     // this.store.dispatch(addGaymer(formData.gaymerName, formData.streamPlatform || 'Twitch'));
+//
+//     if (formData.streamPlatform === 'Twitch'){
+//       store.dispatch(fetchTwitchIdFromName(formData.gaymerName, formData.streamPlatform || 'Twitch'))
+//         .then(()=>DebugLog(store.getState()));
+//     }
+//   }
+//
+//   render() {
+//
+//
+//     return (
+//       <div className="App">
+//
+//         <AppHeader></AppHeader>
+//
+//         <AddGaymerForm onAddGaymerFormSubmit={this.onAddGaymerFormSubmit}/>
+//
+//         <GamesList/>
+//
+//         <Gaymers/>
+//       </div>
+//     );
+//   }
+// }
 
 export default App;

@@ -1,6 +1,8 @@
 {
   "rules": {
-    ".read": true,
-    ".write": "auth != null"
+    "gaymers": {
+      ".read": true,
+      ".write": true
+    }
   }
 }

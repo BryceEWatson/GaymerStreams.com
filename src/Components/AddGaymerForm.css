@@ -9,7 +9,6 @@
 }
 .twitch-gaymer-input-label{
   font-size: 0.9em;
-  /*flex-basis: 40% !important;*/
 }
 .twitch-gaymer-input{
   flex-basis: 30% !important;
@@ -24,7 +23,7 @@
 .AddGaymerFormStatus {
   padding: 1em;
   position: absolute;
-  top: 4em;
+  top: 7em;
   right: 1.8em;
 }
 

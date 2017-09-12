@@ -1,6 +1,20 @@
+@import url('https://fonts.googleapis.com/css?family=VT323');
+
 .AppHeader{
-  padding: 0.2em 1.2em;
+  /*background: linear-gradient(to right, rgba(0,0,0,0.2) 100%, black), url(https://static.pexels.com/photos/14676/pexels-photo-14676.png);
+  background-size: cover;
+  background-position: center;
+*/
 }
+
+.AppHeaderSection{
+  padding: 0.5em 1.2em;
+}
+
+.AppHeaderSectionLogo{
+
+}
+
 h3{
   margin-bottom:0em;
 }
@@ -9,22 +23,65 @@ h3{
 }
 
 .navbar-slogan{
-  visibility:hidden !important;
+  display:block;
+  /*visibility:hidden !important;*/
+}
+
+.eight-bit-font{
+  display: inline-block;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  overflow: hidden;
+  border: none;
+  font: normal 70px/1 "VT323", Helvetica, sans-serif;
+  font-size: 4em;
+  color: #5764c6;
+  text-align: center;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  text-shadow: 5px 5px 0 white;
+}
+
+.eight-bit-font:hover{
+  text-decoration: none;
+}
+
+.navbar-chip-override{
+  background: white !important;
+}
+
+.colorG{
+  color: #FF2A00;
+}
+.colorA{
+  color: #ffb700;
+}
+.colorY{
+  color: #32b643;
+}
+
+.navbar-left-section, .navbar-right-section{
+  flex-basis:50% !important;
 }
 @media (max-width: 1280px) {
-  .navbar-slogan{
+  /*.navbar-slogan{
     display:block;
-  }
+  }*/
 }
 @media (max-width: 960px) {
-  .navbar-slogan{
+  /*.navbar-slogan{
     display:block;
-  }
+  }*/
 }
 @media (max-width: 840px) {
-  .navbar-slogan{
+  /*.navbar-slogan{
     display:block;
+  }*/
+}
+@media (max-width: 600px) {
+  .navbar-left-section, .navbar-right-section{
+    flex-basis:100% !important;
   }
 }
-@media (max-width: 600px) { }
 @media (max-width: 480px) { }

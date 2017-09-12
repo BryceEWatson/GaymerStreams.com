@@ -1,3 +1,32 @@
+.AppHeader{
+  background-color:
+}
+
+.navbar-left-section{
+  padding-left:0.4em;
+}
+
 .navbar-add-gaymer-form {
   justify-content: flex-start;
 }
+
+.navbar-slogan{
+  visibility:hidden !important;
+}
+@media (max-width: 1280px) {
+  .navbar-slogan{
+    display:block;
+  }
+}
+@media (max-width: 960px) {
+  .navbar-slogan{
+    display:block;
+  }
+}
+@media (max-width: 840px) {
+  .navbar-slogan{
+    display:block;
+  }
+}
+@media (max-width: 600px) { }
+@media (max-width: 480px) { }

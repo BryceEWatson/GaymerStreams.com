@@ -9,10 +9,10 @@ const AddGaymerForm = ({ isFetching, isSuccess, hasError, status, onFormSubmit }
 
   return (
     <section className="AddGaymerFormSection">
-      <div className="form-horizontal input-group input-inline">
+      <div className="form-horizontal input-group input-inline AddGaymerFormContainer">
           <div className="form-group">
-            <label className="" htmlFor="gaymerName">Add a Gaymer Bear Streamer</label>
-            <input className="form-input input-group-addon" id="gaymerName" type="text" placeholder="Enter Twitch UserName"
+            <label className="twitch-gaymer-input-label input-group-addon" htmlFor="gaymerName">Add Twitch Gaymer</label>
+            <input className="form-input input-group-addon twitch-gaymer-input" id="gaymerName" type="text" placeholder="Enter Twitch UserName"
               ref={node => {
                 gaymerName = node
               }}
@@ -23,11 +23,12 @@ const AddGaymerForm = ({ isFetching, isSuccess, hasError, status, onFormSubmit }
                 }
               }} required/>
               <button
-                className={`btn btn-primary input-group-btn ${isFetching ? 'loading' : ''}`}
+                className={`btn input-group-btn ${isFetching ? 'loading' : ''}`}
                 onClick={(e) => {
                   onFormSubmit(gaymerName.value, streamPlatform);
                 }}
                 >Submit</button>
+
           </div>
 
           {/*<div className="form-group">

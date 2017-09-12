@@ -50,6 +50,7 @@ export const FILTER_TWITCH_STREAMS_FAILURE = 'FILTER_TWITCH_STREAMS_FAILURE';
 export const FILTER_TWITCH_STREAMS_SUCCESS = 'FILTER_TWITCH_STREAMS_SUCCESS';
 export const FILTER_TWITCH_STREAMS_EMPTY = 'FILTER_TWITCH_STREAMS_EMPTY';
 
+export const TOGGLE_SELECTED_GAMES_FILTER = 'TOGGLE_SELECTED_GAMES_FILTER';
 
 export const GET_ALL_GAMES = 'GET_ALL_GAMES';
 export const GET_GAYMERS_FOR_GAME = 'GET_GAYMERS_FOR_GAME';
@@ -557,10 +558,17 @@ export function getAllGames(){
 
 export function filterTwitchStreamsByGame(game){
   return (dispatch, getState) => {
-    const { twitchLiveStreamsList, getGaymers } = getState();
+    const { twitchLiveStreamsList, getGaymers, getGames } = getState();
+
     DebugLog('getState',getState());
     DebugLog('twitchLiveStreamsList',twitchLiveStreamsList);
     DebugLog('getGaymers',getGaymers);
+    DebugLog('getGames',getGames);
+
+
+
+    //update ui
+    // dispatch(toggleSelectedGamesFilter(game, getGames);
 
     let channels = extractChannelIdsFromArrayAsString(getGaymers.gaymers);
     DebugLog('channels',channels);
@@ -570,6 +578,13 @@ export function filterTwitchStreamsByGame(game){
   }
 }
 
+export function toggleSelectedGamesFilter(game, games){
+  return {
+    type: TOGGLE_SELECTED_GAMES_FILTER,
+    game,
+    games
+  }
+}
 
 /*
  * generates the FILTER_TWITCH_STREAMS action

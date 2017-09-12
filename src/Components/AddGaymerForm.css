@@ -1,11 +1,26 @@
-.form-group {
-  padding: 0.5em;
-}
+.AddGaymerFormSection{
+  width: 100%;
 
+}
+.form-group {
+  padding: unset;
+  align-items: center;
+  width: 100%;
+}
+.twitch-gaymer-input-label{
+  font-size: 0.9em;
+  /*flex-basis: 40% !important;*/
+}
+.twitch-gaymer-input{
+  flex-basis: 30% !important;
+}
 .AddGaymerFormStatus {
   position: relative;
+  width:100%;
 }
-
+.AddGaymerFormContainer{
+  width: 100%;
+}
 .AddGaymerFormStatus {
   padding: 1em;
   position: absolute;
@@ -21,7 +36,7 @@
 .toast-override {
   width: unset !important;
   opacity: 0;
-  
+
   transform: translateX(200%);
   -webkit-transform: translateX(200%);
   -webkit-transition: all .8s ease;

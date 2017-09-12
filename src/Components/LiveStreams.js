@@ -38,7 +38,7 @@ const LiveStreams = ({ isFetching, status, liveStreams, game }) => {
                     <i className="icon icon-share"></i>
                   </a>
                   <div className="card-title h5">{stream.channel.display_name} </div>
-                  <div className="card-subtitle text-gray">Game: {stream.game}</div>
+                  <div className="card-subtitle text-gray">Streaming: {stream.game}</div>
                 </div>
                 <div className="card-body">
                   Stream title: {stream.channel.status}<br/>

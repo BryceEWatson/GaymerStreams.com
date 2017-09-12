@@ -10,6 +10,7 @@ import AppHeader from './Components/AppHeader';
 import GamesListContainer from './Components/Containers/GamesListContainer';
 import LiveStreamsContainer from './Components/Containers/LiveStreamsContainer';
 import GaymersContainer from './Components/Containers/GaymersContainer';
+import AppFooter from './Components/AppFooter';
 
 
 const App = () => (
@@ -22,6 +23,8 @@ const App = () => (
     <LiveStreamsContainer/>
 
     <GaymersContainer/>
+
+    <AppFooter/>
   </div>
 )
 

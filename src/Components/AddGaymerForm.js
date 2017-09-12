@@ -23,7 +23,7 @@ const AddGaymerForm = ({ isFetching, isSuccess, hasError, status, onFormSubmit }
                 }
               }} required/>
               <button
-                className={`btn input-group-btn ${isFetching ? 'loading' : ''}`}
+                className={`btn btn-primary input-group-btn ${isFetching ? 'loading' : ''}`}
                 onClick={(e) => {
                   onFormSubmit(gaymerName.value, streamPlatform);
                 }}

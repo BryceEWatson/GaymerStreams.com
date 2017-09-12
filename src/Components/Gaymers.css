@@ -1,0 +1,12 @@
+.GaymersSection{
+  padding: 1.2em;
+}
+
+.accordion .accordion-header{
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+.GaymersTitle{
+  font-size: 28px;
+  font-weight: 500;
+}

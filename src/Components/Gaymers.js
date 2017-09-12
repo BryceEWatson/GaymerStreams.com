@@ -1,23 +1,32 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import './Gaymers.css';
 
 const Gaymers = ({ status, gaymers }) => (
 
   <section className="GaymersSection">
 
-    <h2>Gaymers</h2>
+    <details className="accordion" closed>
+      <summary className="accordion-header">
+        <i className="icon icon-arrow-right mr-1"></i>
+          <span className="GaymersTitle">Gaymers</span>
+      </summary>
+      <div className="accordion-body">
+        <ul className="Gaymers menu menu-nav">
+          {gaymers.map(gaymer => (
+            <li className="menu-item">
+               <a target="_blank" href={`https://www.twitch.tv/${gaymer.gaymerName}`}>{gaymer.gaymerName}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </details>
 
-    <ul className="Gaymers">
-      {gaymers.map(gaymer => (
-        <li>
-          Gaymer Name: {gaymer.gaymerName}<br/>
-        </li>
-      ))}
-    </ul>
 
-    <div className="GaymersStatus">
+
+    {/*<div className="GaymersStatus">
       Status: {status}
-    </div>
+    </div>*/}
   </section>
 )
 

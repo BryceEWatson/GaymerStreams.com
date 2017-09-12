@@ -6,6 +6,12 @@
     background: #5764c6;
     color: #fff;
 }*/
+.GamesListSection{
+  padding:1.2em;
+}
+.GamesListContainer{
+  padding-top: 0.4em;
+}
 
 .chip-selected {
   background: #5764c6 !important;

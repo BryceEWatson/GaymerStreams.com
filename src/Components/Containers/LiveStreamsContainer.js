@@ -5,7 +5,8 @@ const mapStateToProps = (state) => {
   return {
     isFetching: state.twitchLiveStreamsList.isFetching,
     status: state.twitchLiveStreamsList.status,
-    liveStreams: state.twitchLiveStreamsList.liveStreams
+    liveStreams: state.twitchLiveStreamsList.liveStreams,
+    game: state.twitchLiveStreamsList.game
   }
 }
 

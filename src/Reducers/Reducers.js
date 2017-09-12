@@ -140,7 +140,7 @@ export function getGames(state = {
   status: undefined,
   isSuccess: false,
   games: []
-   }, action){
+  }, action){
 
   switch(action.type){
     case GET_GAMES:

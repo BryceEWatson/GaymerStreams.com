@@ -1,29 +1,52 @@
 import React from 'react';
 import DebugLog from '../Utils/DebugLog';
+import './LiveStreams.css'
 
-const LiveStreams = ({ isFetching, status, liveStreams }) => {
+const LiveStreams = ({ isFetching, status, liveStreams, game }) => {
 
   return (
     <section className="LiveStreamsSection">
 
-      <h2>Live Streams</h2>
+      <h3 className="LiveStreamsPadding">Live Streams</h3>
 
       <div className={`LiveStreamsStatus ${isFetching ? 'loading loading-lg' : ''}`}></div>
 
-      <div className="LiveStreams container">
+      <div className="container LiveStreamsContainer">
         <div className="columns">
 
-        {liveStreams.map(stream => (
-
-
-            <div className="column col-3 col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
-            <img className="img-responsive" src={stream.preview.medium}/>
-              Game: {stream.game} <br/>
-              Name: {stream.channel.display_name} <br/>
-              Stream title: {stream.channel.status}<br/>
+          {liveStreams.length == 0 &&
+            <div className="empty column col-12">
+              <div className="empty-icon">
+                <i className="icon icon-people"></i>
+              </div>
+              <p className="empty-title h5">No streams live {game ? 'for ' + game  : '' } at the moment.</p>
+              <p className="empty-subtitle">Please check back later.</p>
+              <div className="empty-action">
+                <a href="/" className="btn btn-primary">Refresh</a>
+              </div>
             </div>
+          }
 
-        ))}
+          {liveStreams.length > 0 &&  liveStreams.map(stream => (
+            <a href={stream.channel.url} target="_blank" className="LiveStreams-link-override column col-3 col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
+              <div className="card LiveStreamCard">
+                <div className="card-image">
+                  <img className="img-responsive" src={stream.preview.medium}/>
+                </div>
+                <div className="card-header">
+                  <a className="btn btn-secondary LiveStreams-link-override float-right">
+                    <i className="icon icon-share"></i>
+                  </a>
+                  <div className="card-title h5">{stream.channel.display_name} </div>
+                  <div className="card-subtitle text-gray">Game: {stream.game}</div>
+                </div>
+                <div className="card-body">
+                  Stream title: {stream.channel.status}<br/>
+                </div>
+              </div>
+            </a>
+          ))}
+
         </div>
       </div>
     </section>

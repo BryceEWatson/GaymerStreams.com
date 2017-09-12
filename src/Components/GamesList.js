@@ -4,10 +4,10 @@ import './GamesList.css'
 
 const GamesList = ({ status, games, onClickGame }) => (
 
-  <section className="Games">
+  <section className="GamesListSection">
     <h3>Games</h3>
 
-    <div className="filter">
+    <div className="GamesListContainer filter">
       {games.map(game => (
         <input type="radio" id={`tag-${game.name.replace(/\s/g,'')}`} className="filter-tag" name="filter-radio" hidden />
       ))}
@@ -22,7 +22,7 @@ const GamesList = ({ status, games, onClickGame }) => (
       </div>
     </div>
 
-    <div class="GamesStatus">Status: {status}</div>
+    {/*<div class="GamesStatus">Status: {status}</div>*/}
   </section>
 )
 

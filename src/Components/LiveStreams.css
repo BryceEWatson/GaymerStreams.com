@@ -1,0 +1,22 @@
+.LiveStreamsSection{
+  padding: 1.2em;
+}
+
+.LiveStreamCard{
+  height: 100%;
+}
+
+.LiveStreams-link-override, .LiveStreams-link-override:hover,
+.LiveStreams-link-override:visited, .LiveStreams-link-override:focus {
+  border:none;
+  color: inherit;
+  text-decoration: none;
+  outline: 0;
+  -moz-outline-style: none
+}
+
+.LiveStreamsContainer{
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding-top:1em; 
+}

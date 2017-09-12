@@ -25,11 +25,11 @@
   padding: 1em;
   position: absolute;
   top: 4em;
-  right: 1em;
+  right: 1.8em;
 }
 
 .AddGaymerFormStatus .toast-override {
-  padding: 1em;
+  padding: 1.2em;
   width: unset;
 }
 

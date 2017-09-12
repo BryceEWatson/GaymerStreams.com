@@ -8,7 +8,9 @@ const AppHeader = () => (
      {/*<a href="#" className="btn btn-link navbar-slogan">Find Gaymers Bears streaming your favorite games!</a>*/}
     </section>
     <section className="navbar-section navbar-right-section">
-      <button className="btn btn-link">Contact</button>
+      <a href="https://twitter.com/AVinnity"
+        className="twitter-follow-button"
+        data-show-count="false" data-size="large">Follow @AVinnity</a>
     </section>
 
   </footer>

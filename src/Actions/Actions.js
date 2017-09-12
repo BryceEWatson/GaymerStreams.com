@@ -83,7 +83,13 @@ export const GameFilters = {
     // First dispatch: the app state is updated to inform
     // that the API call is starting.
 
-    dispatch(addGaymerRequest(twitchName))
+    dispatch(addGaymerRequest(twitchName));
+
+    if (!twitchName) {
+      return setTimeout(function(){
+        dispatch(addGaymerFailure(undefined, 'Twitch', 'You must enter a Twitch name'));
+      }, 300);
+    }
 
     // The function called by the thunk middleware can return a value,
     // that is passed on as the return value of the dispatch method.

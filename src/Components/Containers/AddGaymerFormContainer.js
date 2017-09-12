@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import AddGaymerForm from '../AddGaymerForm';
-import { fetchTwitchIdFromName } from '../../Actions/Actions';
+import { addGaymer, addGaymerFailure, fetchTwitchIdFromName } from '../../Actions/Actions';
 
 const mapStateToProps = (state) => {
   return {
@@ -14,7 +14,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     onFormSubmit: (gaymerName, streamPlatform) => {
-      dispatch(fetchTwitchIdFromName(gaymerName, streamPlatform))
+      dispatch(fetchTwitchIdFromName(gaymerName, streamPlatform));
     }
   }
 }

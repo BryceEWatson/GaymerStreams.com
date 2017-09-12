@@ -14,10 +14,10 @@ const LiveStreams = ({ isFetching, status, liveStreams, game }) => {
       <div className="container LiveStreamsContainer">
         <div className="columns">
 
-          {liveStreams.length == 0 &&
+          {liveStreams && liveStreams.length == 0 &&
             <div className="empty column col-12">
               <div className="empty-icon">
-                <i className="icon icon-people"></i>
+                <i className="icon icon-refresh"></i>
               </div>
               <p className="empty-title h5">No streams live {game ? 'for ' + game  : '' } at the moment.</p>
               <p className="empty-subtitle">Please check back later.</p>
@@ -27,7 +27,7 @@ const LiveStreams = ({ isFetching, status, liveStreams, game }) => {
             </div>
           }
 
-          {liveStreams.length > 0 &&  liveStreams.map(stream => (
+          {liveStreams && liveStreams.length > 0 &&  liveStreams.map(stream => (
             <a href={stream.channel.url} target="_blank" className="LiveStreams-link-override column col-3 col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
               <div className="card LiveStreamCard">
                 <div className="card-image">

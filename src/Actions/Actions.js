@@ -44,6 +44,13 @@ export const GET_GAMES_FAILURE = 'GET_GAMES_FAILURE';
 export const GET_GAMES_SUCCESS = 'GET_GAMES_SUCCESS';
 export const GET_GAMES_EMPTY = 'GET_GAMES_EMPTY';
 
+export const FILTER_TWITCH_STREAMS = 'FILTER_TWITCH_STREAMS';
+export const FILTER_TWITCH_STREAMS_REQUEST = 'FILTER_TWITCH_STREAMS_REQUEST';
+export const FILTER_TWITCH_STREAMS_FAILURE = 'FILTER_TWITCH_STREAMS_FAILURE';
+export const FILTER_TWITCH_STREAMS_SUCCESS = 'FILTER_TWITCH_STREAMS_SUCCESS';
+export const FILTER_TWITCH_STREAMS_EMPTY = 'FILTER_TWITCH_STREAMS_EMPTY';
+
+
 export const GET_ALL_GAMES = 'GET_ALL_GAMES';
 export const GET_GAYMERS_FOR_GAME = 'GET_GAYMERS_FOR_GAME';
 export const SET_SELECTED_GAME = 'SET_SELECTED_GAME';
@@ -138,7 +145,7 @@ export function fetchGaymers() {
 
       if (gaymersSnapshot){
         dispatch(getGaymersSuccess(Object.values(gaymersSnapshot)));
-        dispatch(fetchTwitchLiveStreams(undefined, extractChannelIdsAsString(gaymersSnapshot)));
+        dispatch(fetchTwitchLiveStreams(undefined, extractChannelIdsFromObjectAsString(gaymersSnapshot)));
       } else {
         dispatch(getGaymersEmpty());
       }
@@ -188,7 +195,7 @@ export function fetchTwitchLiveStreams(game, channelIds) {
     if (game) { // get live streams for a particular game only
       url += 'game=' + game;
       if (channelIds) { // should be defined if game is defined
-        url += 'channel=' + channelIds;
+        url += '&channel=' + channelIds;
       }
     } else if (channelIds){ //get live streams for gaymers on file, any games
       url += 'channel=' + channelIds;
@@ -224,39 +231,43 @@ export function fetchTwitchLiveStreams(game, channelIds) {
  * Set games in database.
  */
 export function storeGames(liveGames) {
-  return function (dispatch) {
-    console.log('setting unique games',liveGames);
-
+  return function(dispatch) {
     dispatch(setGamesRequest());
+    DebugLog('liveGames', liveGames);
+    if (liveGames) { //if there are any live games to record in database
+      let gamesRef = FirebaseUtil.getFirebase().database().ref('games');
 
-    if (liveGames){ //if there are any live games to record in database
-      FirebaseUtil.getFirebase().database().ref('games').once('value').then((gamesSnap) => {
-        let gamesSnapshot = gamesSnap.val();
-        DebugLog('setUniqueGames', gamesSnapshot);
+      gamesRef.once('value').then((gamesSnap)=>{
+        let existingGames = gamesSnap.val();
+        DebugLog('existingGames', existingGames);
 
-        let allGames;
-        if (gamesSnapshot){
-
-          let diff = difference(gamesSnapshot, liveGames); //compare liveGames and gamesSnapshot
-          DebugLog('diff length',diff.length);
-
-          if (diff.length > 0){ //arrays differ
-            DebugLog('difference detected!',liveGames);
-            allGames = union(Object.values(gamesSnapshot), liveGames); //merge arrays
-            allGames.sort(function(a,b){
-              return a.toLowerCase().localeCompare(b.toLowerCase()); //sort case-insensitive
-            });
-            FirebaseUtil.getFirebase().database().ref('games').set(allGames, function(err){ //only record if arrays are different
-              if (err){
-                DebugLog('err!',allGames);
-              } else {
-                dispatch(setGamesSuccess(allGames));
-              }
-            });
+        let updates = {}
+        if (existingGames) {
+          for (let k = 0; k < liveGames.length; k += 1) {
+            //only write if liveGames[k] key not in existingGames
+            if (!(liveGames[k] in existingGames)){
+              DebugLog('key ' + liveGames[k] + ' not in, therefore, write');
+              updates['/' + liveGames[k]] = { name: liveGames[k] };
+            }
+          }
+        } else { //no games yet in database
+          DebugLog('no games yet, adding');
+          for (let k = 0; k < liveGames.length; k+=1){
+            updates['/' + liveGames[k]] = { name: liveGames[k] };
           }
         }
-      }).catch((err) => {
-        dispatch(setGamesFailure(err));
+
+        //batch update
+        if (Object.keys(updates).length !== 0){
+          gamesRef.update(updates).then(() => {
+            dispatch(setGamesSuccess('storeGames: Game updates complete.'));
+          }).catch((err) => {
+            dispatch(setGamesFailure(err));
+          });
+        } else {
+          dispatch(setGamesSuccess('storeGames: All games in, updates not needed'));
+        }
+
       });
     }
   }
@@ -445,11 +456,10 @@ export function setGamesFailure(error){
 /*
  * generates the SET_GAMES_SUCCESS action
  */
-export function setGamesSuccess(games){
+export function setGamesSuccess(status){
   return {
     type: SET_GAMES_SUCCESS,
-    status: 'Successfully recorded unique games in database.',
-    games
+    status
   }
 }
 
@@ -535,7 +545,6 @@ export function setGameFilter(filter){
   }
 }
 
-
 /*
  * generates the GET_ALL_GAMES action
  */
@@ -546,10 +555,74 @@ export function getAllGames(){
 }
 
 
+export function filterTwitchStreamsByGame(game){
+  return (dispatch, getState) => {
+    const { twitchLiveStreamsList, getGaymers } = getState();
+    DebugLog('getState',getState());
+    DebugLog('twitchLiveStreamsList',twitchLiveStreamsList);
+    DebugLog('getGaymers',getGaymers);
 
-function extractChannelIdsAsString(gaymersObj){
+    let channels = extractChannelIdsFromArrayAsString(getGaymers.gaymers);
+    DebugLog('channels',channels);
+
+    dispatch(fetchTwitchLiveStreams(game, extractChannelIdsFromArrayAsString(getGaymers.gaymers)));
+
+  }
+}
+
+
+/*
+ * generates the FILTER_TWITCH_STREAMS action
+ */
+export function filterTwitchStreams(){
+  return {
+    type: FILTER_TWITCH_STREAMS
+  }
+}
+
+/*
+ * generates the FILTER_TWITCH_REQUEST action
+ */
+export function filterTwitchStreamsRequest(){
+  return {
+    type: FILTER_TWITCH_STREAMS_REQUEST
+  }
+}
+
+/*
+ * generates the FILTER_TWITCH_FAILURE action
+ */
+export function filterTwitchStreamsFailure(){
+  return {
+    type: FILTER_TWITCH_STREAMS_FAILURE
+  }
+}
+
+
+/*
+ * generates the FILTER_TWITCH_SUCCESS action
+ */
+export function filterTwitchStreamsSuccess(){
+  return {
+    type: FILTER_TWITCH_STREAMS_SUCCESS
+  }
+}
+
+/*
+ * generates the FILTER_TWITCH_EMPTY action
+ */
+export function filterTwitchStreamsEmpty(){
+  return {
+    type: FILTER_TWITCH_STREAMS_EMPTY
+  }
+}
+
+
+/*
+ * Utils
+ */
+function extractChannelIdsFromObjectAsString(gaymersObj){
   var arr = [];
-
   for (let k in gaymersObj){
     if (gaymersObj.hasOwnProperty(k)){
       let gaymer = gaymersObj[k];
@@ -558,7 +631,14 @@ function extractChannelIdsAsString(gaymersObj){
       }
     }
   }
+  return arr.join();
+}
 
+function extractChannelIdsFromArrayAsString(gaymersArr){
+  var arr = [];
+  for (let k = 0; k < gaymersArr.length; k+=1){
+    arr.push(gaymersArr[k]['channelId']);
+  }
   return arr.join();
 }
 

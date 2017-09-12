@@ -141,13 +141,21 @@ export function getGames(state = {
       });
     case GET_GAMES_FAILURE:
       return Object.assign({}, state, {
+        isFetching: false,
         status: action.status
       });
     case GET_GAMES_SUCCESS:
       return Object.assign({}, state, {
+        isFetching: false,
         isSuccess: true,
         status: action.status,
         games: action.games
+      });
+    case GET_GAMES_EMPTY:
+      return Object.assign({}, state, {
+        isFetching: false,
+        isSuccess: true,
+        status: action.status
       });
     default:
       return state;
@@ -173,10 +181,12 @@ export function setGames(state = {
       });
     case SET_GAMES_FAILURE:
       return Object.assign({}, state, {
+        isFetching: false,
         status: action.status
       });
     case SET_GAMES_SUCCESS:
       return Object.assign({}, state, {
+        isFetching: false,
         isSuccess: true,
         status: action.status,
         games: action.games
@@ -245,11 +255,13 @@ export function twitchLiveStreamsList(state = {
       });
     case GET_TWITCH_LIVE_STREAMS_FAILURE:
       return Object.assign({}, state, {
+        isFetching: false,
         status: action.status,
         game: action.game
       });
     case GET_TWITCH_LIVE_STREAMS_SUCCESS:
       return Object.assign({}, state, {
+        isFetching: false,
         status: action.status,
         isSuccess: true,
         liveStreams: action.liveStreams,

@@ -1,12 +1,10 @@
 import React from 'react';
-import DebugLog from '../Utils/DebugLog';
 import './AddGaymerForm.css';
 
 const AddGaymerForm = ({ isFetching, isSuccess, hasError, status, onFormSubmit }) => {
 
   let gaymerName;
   let streamPlatform = 'Twitch';
-  let toastVisibility = 'toast-hidden';
 
   return (
     <section className="AddGaymerFormSection">

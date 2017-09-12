@@ -1,5 +1,4 @@
 import React from 'react';
-import DebugLog from '../Utils/DebugLog';
 import './LiveStreams.css'
 
 const LiveStreams = ({ isFetching, status, liveStreams, game }) => {
@@ -14,7 +13,7 @@ const LiveStreams = ({ isFetching, status, liveStreams, game }) => {
       <div className="container LiveStreamsContainer">
         <div className="columns">
 
-          {liveStreams && liveStreams.length == 0 &&
+          {liveStreams && liveStreams.length === 0 &&
             <div className="empty column col-12">
               <div className="empty-icon">
                 <i className="icon icon-refresh"></i>
@@ -31,7 +30,8 @@ const LiveStreams = ({ isFetching, status, liveStreams, game }) => {
             <div key={stream.channel.url} className="LiveStreams-link-override column col-3 col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
               <div className="card LiveStreamCard">
                 <a href={stream.channel.url} target="_blank" className="card-image">
-                  <img className="img-responsive" src={stream.preview.medium}/>
+                  <img className="img-responsive" src={stream.preview.medium}
+                    alt="Stream channel preview"/>
                 </a>
                 <div className="card-header">
                   <a href={stream.channel.url} target="_blank" className="btn btn-secondary float-right">

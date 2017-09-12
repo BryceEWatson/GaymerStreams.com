@@ -1,7 +1,5 @@
 import FirebaseUtil from '../Utils/InitializeFirebase';
 import DebugLog from '../Utils/DebugLog';
-import { difference, union } from 'lodash';
-
 
 var twitchApiGetOptions = {
   method: 'GET',
@@ -108,6 +106,10 @@ export const GameFilters = {
       )
       .then((json) => {
           DebugLog('fetchTwitchIdFromName RESPONSE', json);
+
+          if (!json || !json.users || !json.users[0] || !json.users[0]._id){
+            return dispatch(addGaymerFailure(twitchName, 'Twitch', 'Twitch user ' + twitchName + ' does not exist'));
+          }
 
           let gaymer = {
             streamPlatform: 'Twitch',

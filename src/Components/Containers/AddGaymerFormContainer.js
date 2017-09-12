@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import AddGaymerForm from '../AddGaymerForm';
-import { addGaymer, addGaymerFailure, fetchTwitchIdFromName } from '../../Actions/Actions';
+import { fetchTwitchIdFromName } from '../../Actions/Actions';
 
 const mapStateToProps = (state) => {
   return {

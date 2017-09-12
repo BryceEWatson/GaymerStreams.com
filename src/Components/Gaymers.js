@@ -6,7 +6,7 @@ const Gaymers = ({ status, gaymers }) => (
 
   <section className="GaymersSection">
 
-    <details className="accordion" closed>
+    <details className="accordion">
       <summary className="accordion-header">
         <i className="icon icon-arrow-right mr-1"></i>
           <span className="GaymersTitle">Gaymers</span>
@@ -14,7 +14,7 @@ const Gaymers = ({ status, gaymers }) => (
       <div className="accordion-body">
         <ul className="Gaymers menu menu-nav">
           {gaymers.map(gaymer => (
-            <li key={gaymer.gaymerId} className="menu-item">
+            <li key={gaymer.channelId} className="menu-item">
                <a target="_blank" href={`https://www.twitch.tv/${gaymer.gaymerName}`}>{gaymer.gaymerName}</a>
             </li>
           ))}

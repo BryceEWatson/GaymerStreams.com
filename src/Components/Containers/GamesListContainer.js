@@ -12,8 +12,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
      onClickGame: (game) => {
-      //  dispatch(fetch(gaymerName, streamPlatform))
-      console.log('clicked', game);
       dispatch(filterTwitchStreamsByGame(game));
     }
   }

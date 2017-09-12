@@ -50,7 +50,7 @@ export const FILTER_TWITCH_STREAMS_FAILURE = 'FILTER_TWITCH_STREAMS_FAILURE';
 export const FILTER_TWITCH_STREAMS_SUCCESS = 'FILTER_TWITCH_STREAMS_SUCCESS';
 export const FILTER_TWITCH_STREAMS_EMPTY = 'FILTER_TWITCH_STREAMS_EMPTY';
 
-export const TOGGLE_SELECTED_GAMES_FILTER = 'TOGGLE_SELECTED_GAMES_FILTER';
+export const TOGGLE_SELECTED_GAME = 'TOGGLE_SELECTED_GAME';
 
 export const GET_ALL_GAMES = 'GET_ALL_GAMES';
 export const GET_GAYMERS_FOR_GAME = 'GET_GAYMERS_FOR_GAME';
@@ -193,6 +193,7 @@ export function fetchTwitchLiveStreams(game, channelIds) {
     // In this case, we return a promise to wait for.
     // This is not required by thunk middleware, but it is convenient for us.
     let url = 'https://api.twitch.tv/kraken/streams/?';
+    game = game === 'All Games' ? undefined : game;
     if (game) { // get live streams for a particular game only
       url += 'game=' + game;
       if (channelIds) { // should be defined if game is defined
@@ -565,10 +566,8 @@ export function filterTwitchStreamsByGame(game){
     DebugLog('getGaymers',getGaymers);
     DebugLog('getGames',getGames);
 
-
-
-    //update ui
-    // dispatch(toggleSelectedGamesFilter(game, getGames);
+    //update filter ui
+    dispatch(toggleSelectedGame(game, getGames.games));
 
     let channels = extractChannelIdsFromArrayAsString(getGaymers.gaymers);
     DebugLog('channels',channels);
@@ -578,9 +577,10 @@ export function filterTwitchStreamsByGame(game){
   }
 }
 
-export function toggleSelectedGamesFilter(game, games){
+export function toggleSelectedGame(game, games){
   return {
-    type: TOGGLE_SELECTED_GAMES_FILTER,
+    type: TOGGLE_SELECTED_GAME,
+    status: 'Internal: Successfully toggled game filter UI',
     game,
     games
   }

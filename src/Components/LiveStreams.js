@@ -1,12 +1,15 @@
 import React from 'react';
 import DebugLog from '../Utils/DebugLog';
 
-const LiveStreams = ({ status, liveStreams }) => {
+const LiveStreams = ({ isFetching, status, liveStreams }) => {
 
   return (
     <section className="LiveStreamsSection">
 
       <h2>Live Streams</h2>
+
+      <div className={`LiveStreamsStatus ${isFetching ? 'loading loading-lg' : ''}`}></div>
+
       <ul className="LiveStreams">
         Streams currently live: {liveStreams.map(stream => (
           <li>
@@ -17,10 +20,6 @@ const LiveStreams = ({ status, liveStreams }) => {
           </li>
         ))}
       </ul>
-
-      <div className="LiveStreamsStatus">
-        Status: {status}
-      </div>
     </section>
   )
 }

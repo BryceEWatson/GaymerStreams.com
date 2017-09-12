@@ -9,6 +9,8 @@ import {
 
   GET_GAMES, GET_GAMES_REQUEST, GET_GAMES_FAILURE, GET_GAMES_SUCCESS, GET_GAMES_EMPTY,
 
+  TOGGLE_SELECTED_GAME,
+
   GET_ALL_GAMES,
   GET_TWITCH_LIVE_STREAMS,
   GET_TWITCH_LIVE_STREAMS_REQUEST,
@@ -157,7 +159,7 @@ export function getGames(state = {
         isFetching: false,
         isSuccess: true,
         status: action.status,
-        games: action.games
+        games: setSelectedGame("All Games", action.games)
       });
     case GET_GAMES_EMPTY:
       return Object.assign({}, state, {
@@ -165,9 +167,32 @@ export function getGames(state = {
         isSuccess: true,
         status: action.status
       });
+    case TOGGLE_SELECTED_GAME:
+      return Object.assign({}, state, {
+        isFetching: false,
+        status: action.status,
+        isSuccess: true,
+        games: setSelectedGame(action.game, action.games)
+      });
     default:
       return state;
   }
+}
+
+
+
+function setSelectedGame(game, games){
+  let arr = [];
+  for (let k = 0; k < games.length; k+=1){
+    let g = games[k];
+    if (game && game === g['name']){
+      g['selected'] = true;
+    } else {
+      g['selected'] = false;
+    }
+    arr.push(g);
+  }
+  return arr;
 }
 
 /*

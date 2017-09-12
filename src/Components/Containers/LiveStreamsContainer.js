@@ -3,6 +3,7 @@ import LiveStreams from '../LiveStreams';
 
 const mapStateToProps = (state) => {
   return {
+    isFetching: state.twitchLiveStreamsList.isFetching,
     status: state.twitchLiveStreamsList.status,
     liveStreams: state.twitchLiveStreamsList.liveStreams
   }

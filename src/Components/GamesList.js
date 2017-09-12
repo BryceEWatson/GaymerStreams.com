@@ -8,18 +8,13 @@ const GamesList = ({ status, games, onClickGame }) => (
     <h3>Games</h3>
 
     <div className="filter">
-      <input type="radio" id="tag-all" className="filter-tag" name="filter-radio" hidden checked />
       {games.map(game => (
         <input type="radio" id={`tag-${game.name.replace(/\s/g,'')}`} className="filter-tag" name="filter-radio" hidden />
       ))}
 
       <div className="filter-nav">
-        <label className="chip chip-selected"
-          htmlFor="tag-all"
-          onClick={() => onClickGame(undefined, this)}>
-          All Games</label>
         {games.map(game => (
-          <label className="chip"
+          <label className={`chip ${game.selected ? 'chip-selected' : ''}`}
           htmlFor={`tag-${game.name.replace(/\s/g,'')}`}
           onClick={(e) => onClickGame(game.name, e)}>
           {game.name}</label>

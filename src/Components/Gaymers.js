@@ -14,7 +14,7 @@ const Gaymers = ({ status, gaymers }) => (
       <div className="accordion-body">
         <ul className="Gaymers menu menu-nav">
           {gaymers.map(gaymer => (
-            <li className="menu-item">
+            <li key={gaymer.gaymerId} className="menu-item">
                <a target="_blank" href={`https://www.twitch.tv/${gaymer.gaymerName}`}>{gaymer.gaymerName}</a>
             </li>
           ))}

@@ -28,13 +28,13 @@ const LiveStreams = ({ isFetching, status, liveStreams, game }) => {
           }
 
           {liveStreams && liveStreams.length > 0 &&  liveStreams.map(stream => (
-            <a href={stream.channel.url} target="_blank" className="LiveStreams-link-override column col-3 col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
+            <div key={stream.channel.url} className="LiveStreams-link-override column col-3 col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
               <div className="card LiveStreamCard">
-                <div className="card-image">
+                <a href={stream.channel.url} target="_blank" className="card-image">
                   <img className="img-responsive" src={stream.preview.medium}/>
-                </div>
+                </a>
                 <div className="card-header">
-                  <a className="btn btn-secondary LiveStreams-link-override float-right">
+                  <a href={stream.channel.url} target="_blank" className="btn btn-secondary float-right">
                     <i className="icon icon-share"></i>
                   </a>
                   <div className="card-title h5">{stream.channel.display_name} </div>
@@ -44,7 +44,7 @@ const LiveStreams = ({ isFetching, status, liveStreams, game }) => {
                   Stream title: {stream.channel.status}<br/>
                 </div>
               </div>
-            </a>
+            </div>
           ))}
 
         </div>

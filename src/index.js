@@ -12,6 +12,9 @@ import { fetchGaymers, fetchGames } from './Actions/Actions';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import './index.css';
+import './Styles/spectre-exp.min.css';
+import './Styles/spectre-icons.min.css';
+import './Styles/spectre.min.css';
 
 import FirebaseUtil from './Utils/InitializeFirebase';
 

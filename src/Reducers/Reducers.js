@@ -51,6 +51,7 @@ import {
 export function addGaymer(state = {
   isFetching: false,
   isSuccess: false,
+  hasError: false,
   status: undefined,
   streamPlatform: 'Twitch',
   gaymerName: undefined,
@@ -61,19 +62,26 @@ export function addGaymer(state = {
     case ADD_GAYMER_REQUEST:
       return Object.assign({}, state, {
         isFetching: true,
+        isSuccess: false,
+        hasError: false,
         status: action.status,
         streamPlatform: action.streamPlatform,
         gaymerName: action.gaymerName
       });
     case ADD_GAYMER_FAILURE:
       return Object.assign({}, state, {
+        isFetching: false,
+        isSuccess: false,
+        hasError: true,
         status: action.status,
         streamPlatform: action.streamPlatform,
         gaymerName: action.gaymerName,
       });
     case ADD_GAYMER_SUCCESS:
       return Object.assign({}, state, {
+        isFetching: false,
         isSuccess: true,
+        hasError: false,
         status: action.status,
         streamPlatform: action.streamPlatform,
         gaymerName: action.gaymerName,

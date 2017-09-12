@@ -4,6 +4,9 @@ import { fetchTwitchIdFromName } from '../../Actions/Actions';
 
 const mapStateToProps = (state) => {
   return {
+    isFetching: state.addGaymer.isFetching,
+    isSuccess: state.addGaymer.isSuccess,
+    hasError: state.addGaymer.hasError,
     status: state.addGaymer.status
   }
 }

@@ -1,0 +1,71 @@
+.form-group {
+  padding: 0.5em;
+}
+
+.AddGaymerFormStatus {
+  position: relative;
+}
+
+.AddGaymerFormStatus {
+  padding: 1em;
+  position: absolute;
+  top: 4em;
+  right: 1em;
+}
+
+.AddGaymerFormStatus .toast-override {
+  padding: 1em;
+  width: unset;
+}
+
+.toast-override {
+  width: unset !important;
+  opacity: 0;
+  
+  transform: translateX(200%);
+  -webkit-transform: translateX(200%);
+  -webkit-transition: all .8s ease;
+}
+
+.toast-hidden {
+  display: none;
+}
+
+.toast-success, .toast-warning {
+   -webkit-animation: hide 1.0s forwards;
+   -webkit-animation-iteration-count: 1;
+   -webkit-animation-delay: 3s;
+   animation: hide 1.0s forwards;
+   animation-iteration-count: 1;
+   animation-delay: 3s;
+
+
+   opacity: 1;
+   -webkit-transition: all .8s ease;
+   -webkit-transform: translate3d(0, 0, 0);
+}
+
+
+@keyframes hide {
+  0% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes hide {
+  0% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

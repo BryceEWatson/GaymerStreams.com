@@ -7,7 +7,6 @@ import './App.css';
  * Views
  */
 import AppHeader from './Components/AppHeader';
-import AddGaymerFormContainer from './Components/Containers/AddGaymerFormContainer';
 import GamesListContainer from './Components/Containers/GamesListContainer';
 import LiveStreamsContainer from './Components/Containers/LiveStreamsContainer';
 import GaymersContainer from './Components/Containers/GaymersContainer';
@@ -17,8 +16,6 @@ const App = () => (
   <div className="App">
 
     <AppHeader></AppHeader>
-
-    <AddGaymerFormContainer />
 
     <GamesListContainer/>
 

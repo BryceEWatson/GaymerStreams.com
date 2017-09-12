@@ -1,41 +1,66 @@
 import React from 'react';
 import DebugLog from '../Utils/DebugLog';
+import './AddGaymerForm.css';
 
-
-const AddGaymerForm = ({ status, onFormSubmit }) => {
+const AddGaymerForm = ({ isFetching, isSuccess, hasError, status, onFormSubmit }) => {
 
   let gaymerName, streamPlatform;
+  let toastVisibility = 'toast-hidden';
 
   return (
     <section className="AddGaymerFormSection">
-      <form onSubmit={e => {
-            e.preventDefault()
-            onFormSubmit(gaymerName.value, streamPlatform);
-          }
-        }>
-        <fieldset>
-          <legend>Add a Gaymer Bear Streamer</legend>
+      <div className="form-horizontal input-group input-inline">
+          <div className="form-group">
+            <label className="" htmlFor="gaymerName">Add a Gaymer Bear Streamer</label>
+            <input className="form-input input-group-addon" id="gaymerName" type="text" placeholder="Enter Twitch UserName"
+              ref={node => {
+                gaymerName = node
+              }}
 
-          <label htmlFor="gaymerName">Tag/Username</label>
-          <input id="gaymerName" type="text"
-            ref={node => {
-              gaymerName = node
-            }} required/>
+              onKeyPress={(e) => {
+                if(e.which === 13){
+                  onFormSubmit(gaymerName.value, streamPlatform);
+                }
+              }} required/>
+              <button
+                className={`btn btn-primary input-group-btn ${isFetching ? 'loading' : ''}`}
+                onClick={(e) => {
+                  onFormSubmit(gaymerName.value, streamPlatform);
+                }}
+                >Submit</button>
+          </div>
 
-          <input id="streamPlatformTwitch" type="radio" name="streamPlatform" value="Twitch"
-            onChange={(e) => streamPlatform = e.target.value} required/>
-          <label htmlFor="streamPlatformTwitch">Twitch</label>
+          {/*<div className="form-group">
+            <label className="form-radio" htmlFor="streamPlatformTwitch">
+              <input id="streamPlatformTwitch" type="radio" name="streamPlatform" value="Twitch"
+                onChange={(e) => streamPlatform = e.target.value} required/>
+              <i class="form-icon"></i> Twitch
+            </label>
 
-          <input id="streamPlatformXBOX" type="radio" name="streamPlatform" value="XBOX"
-            onChange={(e) => streamPlatform = e.target.value}/>
-          <label htmlFor="streamPlatformXBOX">XBOX</label>
+            <label className="form-radio" htmlFor="streamPlatformXBOX">
+              <input id="streamPlatformXBOX" type="radio" name="streamPlatform" value="XBOX"
+                onChange={(e) => streamPlatform = e.target.value}/>
+              <i class="form-icon"></i> XBOX
+            </label>
+          </div>*/}
 
-          <input type="submit" value="Submit"/>
-        </fieldset>
-      </form>
+          {/*}<div className="form-group">
+            <label className="form-label">Platform</label>
+            <label className="form-radio">
+              <input type="radio" name="gender" checked/>
+              <i className="form-icon"></i> Male
+            </label>
+            <label className="form-radio">
+              <input type="radio" name="gender"/>
+              <i className="form-icon"></i> Female
+            </label>
+          </div>
+          */}
+      </div>
 
-      <div className="AddGaymerFormStatus">
-        Status: {status}
+
+      <div className={`toast toast-override AddGaymerFormStatus ${isSuccess ? 'toast-success' : hasError ? 'toast-warning': 'toast-hidden' }`}>
+        {status}
       </div>
     </section>
   )

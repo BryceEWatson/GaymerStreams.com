@@ -1,0 +1,13 @@
+/*.filter .filter-tag#tag-all:checked ~ .filter-nav .chip[for="tag-all"],
+.filter .filter-tag#tag-action:checked ~ .filter-nav .chip[for="tag-action"],
+.filter .filter-tag#tag-roleplaying:checked ~ .filter-nav .chip[for="tag-roleplaying"],
+.filter .filter-tag#tag-shooter:checked ~ .filter-nav .chip[for="tag-shooter"],
+.filter .filter-tag#tag-sports:checked ~ .filter-nav .chip[for="tag-sports"] {
+    background: #5764c6;
+    color: #fff;
+}*/
+
+.chip-selected {
+  background: #5764c6 !important;
+  color: #fff !important;
+}

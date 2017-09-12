@@ -10,16 +10,22 @@ const LiveStreams = ({ isFetching, status, liveStreams }) => {
 
       <div className={`LiveStreamsStatus ${isFetching ? 'loading loading-lg' : ''}`}></div>
 
-      <ul className="LiveStreams">
-        Streams currently live: {liveStreams.map(stream => (
-          <li>
-            Game: {stream.game} <br/>
-            Name: {stream.channel.display_name} <br/>
-            Stream title: {stream.channel.status}<br/>
-            <img src={stream.preview.medium}/>
-          </li>
+      <div className="LiveStreams container">
+        <div className="columns">
+
+        {liveStreams.map(stream => (
+
+
+            <div className="column col-3 col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
+            <img className="img-responsive" src={stream.preview.medium}/>
+              Game: {stream.game} <br/>
+              Name: {stream.channel.display_name} <br/>
+              Stream title: {stream.channel.status}<br/>
+            </div>
+
         ))}
-      </ul>
+        </div>
+      </div>
     </section>
   )
 }

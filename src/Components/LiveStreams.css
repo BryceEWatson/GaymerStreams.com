@@ -18,5 +18,10 @@
 .LiveStreamsContainer{
   padding-left: 0 !important;
   padding-right: 0 !important;
-  padding-top:1em; 
+  padding-top:1em;
+}
+
+.livestreams-img-responsive-override{
+  width: 100% !important;
+  min-width: 100% !important;
 }

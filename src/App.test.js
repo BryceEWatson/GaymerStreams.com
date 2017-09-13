@@ -343,3 +343,41 @@ describe('Reducer gameFilters', () => {
    )
  })
 })
+
+/*
+ * Test Utility Methods
+ */
+
+ describe('promote', () => {
+  it('should return promoted array', () => {
+    let arr = [
+      {
+        name: 'Abc Game'
+      },
+      {
+        name: 'All Games'
+      }
+    ];
+
+    expect(Actions.promote('All Games', arr)).toEqual(
+      [
+        {
+          name: 'All Games'
+        },
+        {
+          name: 'Abc Game'
+        }
+      ]
+    )
+  })
+
+  it('should return a new state', () => {
+    const action = {
+      type: Actions.SET_GAME_FILTER,
+      filter: Actions.GameFilters.SORT_BY_FEWEST_VIEWERS
+    }
+    expect(AppReducer.gameFilter(undefined, action)).toEqual(
+      'SORT_BY_FEWEST_VIEWERS'
+    )
+  })
+ })

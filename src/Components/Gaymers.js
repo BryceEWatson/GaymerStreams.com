@@ -13,9 +13,13 @@ const Gaymers = ({ status, gaymers }) => (
       </summary>
       <div className="accordion-body">
         <ul className="Gaymers menu menu-nav">
-          {gaymers.map(gaymer => (
+          {gaymers && gaymers.map(gaymer => (
             <li key={gaymer.channelId} className="menu-item">
-               <a target="_blank" href={`https://www.twitch.tv/${gaymer.gaymerName}`}>{gaymer.gaymerName}</a>
+              <a target="_blank" href={`https://www.twitch.tv/${gaymer.gaymerName}`}>
+                {gaymer.status && gaymer.status === 'Online' ?
+                  ( <div className="status-circle online-circle"></div> ) : ( <div className="status-circle offline-circle"></div> )
+                } {gaymer.gaymerName}
+              </a>
             </li>
           ))}
         </ul>

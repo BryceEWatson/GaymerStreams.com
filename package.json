@@ -28,6 +28,12 @@
     "babel-preset-env": "^1.6.0",
     "babel-preset-stage-0": "^6.24.1",
     "jest": "^21.0.2",
+    "jest-css-modules": "^1.1.0",
     "redux-devtools": "^3.4.0"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "\\.(css)$": "<rootDir>/node_modules/jest-css-modules"
+    }
   }
 }

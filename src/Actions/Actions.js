@@ -31,6 +31,9 @@ export const GET_TWITCH_LIVE_STREAMS_REQUEST = 'GET_TWITCH_LIVE_STREAMS_REQUEST'
 export const GET_TWITCH_LIVE_STREAMS_FAILURE = 'GET_TWITCH_LIVE_STREAMS_FAILURE';
 export const GET_TWITCH_LIVE_STREAMS_SUCCESS = 'GET_TWITCH_LIVE_STREAMS_SUCCESS';
 
+export const UPDATE_GAYMER_ONLINE_STATUS_REQUEST = 'UPDATE_GAYMER_ONLINE_STATUS_REQUEST';
+export const UPDATE_GAYMER_ONLINE_STATUS_COMPLETE = 'UPDATE_GAYMER_ONLINE_STATUS_COMPLETE';
+
 export const SET_GAMES = 'SET_GAMES';
 export const SET_GAMES_REQUEST = 'SET_GAMES_REQUEST';
 export const SET_GAMES_FAILURE = 'SET_GAMES_FAILURE';
@@ -153,6 +156,10 @@ export function fetchGaymers() {
       DebugLog('fetchGaymers', gaymersSnapshot);
 
       if (gaymersSnapshot){
+        var arr = Object.values(gaymersSnapshot);
+        arr.sort(function(a,b){
+          return a['gaymerName'].toLowerCase().localeCompare(b['gaymerName'].toLowerCase());
+        });
         dispatch(getGaymersSuccess(Object.values(gaymersSnapshot)));
         dispatch(fetchTwitchLiveStreams(undefined, extractChannelIdsFromObjectAsString(gaymersSnapshot)));
       } else {
@@ -174,7 +181,22 @@ export function fetchGames() {
         let gamesSnapshot = gamesSnap.val();
         DebugLog('gamesSnapshot', gamesSnapshot);
         if (gamesSnapshot){
-          dispatch(getGamesSuccess(Object.values(gamesSnapshot)));
+
+          // sort games
+          let arr = Object.values(gamesSnapshot);
+
+          DebugLog('before sort', arr);
+          arr.sort(function(a,b){
+            return a['name'].toLowerCase().localeCompare(b['name'].toLowerCase());
+          });
+          DebugLog('after sort', arr);
+
+          // move "All Games" to the top of the list
+          DebugLog('before move', arr);
+          promote('All Games', arr);
+          DebugLog('moved all games to front of list',arr);
+
+          dispatch(getGamesSuccess(arr));
         } else {
           dispatch(getGamesEmpty());
         }
@@ -184,12 +206,27 @@ export function fetchGames() {
   }
 }
 
+// foo is the target value of foo you are looking for
+// arr is your array of items
+// NOTE: this is mutating. Your array will be changed (unless the item isn't found)
+export function promote(target, arr) {
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i]['name'] === target) {
+      let a = arr.splice(i,1);   // removes the item
+      arr.unshift(a[0]);         // adds it back to the beginning
+      break;
+    }
+  }
+  return arr;
+}
+
 /*
  * request live streams given channel ids and game.
  * If no games is specified, then live streams are retrieved based on channelIds
  */
 export function fetchTwitchLiveStreams(game, channelIds) {
-  return function (dispatch) {
+  return function (dispatch, getState) {
+
     // First dispatch: the app state is updated to inform
     // that the API call is starting.
 
@@ -225,6 +262,14 @@ export function fetchTwitchLiveStreams(game, channelIds) {
       .then((json) => {
           dispatch(getTwitchLiveStreamsSuccess(game, channelIds, json.streams));
 
+          //cross reference channelIds with streamers and update gaymers list
+          const { getGaymers } = getState();
+          DebugLog('fetchTwitchLiveStreams json.streams', json.streams);
+          DebugLog('fetchTwitchLiveStreams getGaymers', getGaymers.gaymers);
+          dispatch(updateGaymerOnlineStatusRequest());
+          let gaymers = setGaymersOnlineStatus(getGaymers.gaymers, json.streams);
+          dispatch(updateGaymerOnlineStatusComplete(gaymers));
+
           let liveGamesSet = extractUniqueGamesFromTwitchStreams(json.streams);
 
           if (liveGamesSet){
@@ -235,7 +280,40 @@ export function fetchTwitchLiveStreams(game, channelIds) {
   }
 }
 
+function setGaymersOnlineStatus(gaymers, streams){
+  if (gaymers === undefined || gaymers === null || gaymers.length === 0) return;
+  if (streams === undefined || streams === null) return;
 
+  DebugLog('BEFORE gaymers', gaymers);
+  DebugLog('BEFORE streams', streams);
+
+  for (let i=0; i<gaymers.length; i+=1){
+    for (let j=0; j<streams.length; j+=1){
+      DebugLog(gaymers[i]['channelId'], streams[j].channel._id);
+      if (gaymers[i]['channelId'] == streams[j].channel._id){
+        gaymers[i]['status'] = 'Online';
+      }
+    }
+  }
+
+  DebugLog('AFTER gaymers', gaymers);
+  return gaymers;
+}
+
+export function updateGaymerOnlineStatusRequest(){
+  return {
+    type: UPDATE_GAYMER_ONLINE_STATUS_REQUEST,
+    status: 'Updating gaymers\' online status.'
+  }
+}
+
+export function updateGaymerOnlineStatusComplete(gaymers){
+  return {
+    type: UPDATE_GAYMER_ONLINE_STATUS_COMPLETE,
+    status: 'All gaymers\' status updated.',
+    gaymers
+  }
+}
 
 /*
  * Set games in database.
@@ -645,6 +723,10 @@ export function filterTwitchStreamsEmpty(){
  * Utils
  */
 function extractChannelIdsFromObjectAsString(gaymersObj){
+  if (gaymersObj === undefined || gaymersObj === null){
+    return '';
+  };
+
   var arr = [];
   for (let k in gaymersObj){
     if (gaymersObj.hasOwnProperty(k)){
@@ -658,7 +740,12 @@ function extractChannelIdsFromObjectAsString(gaymersObj){
 }
 
 function extractChannelIdsFromArrayAsString(gaymersArr){
+  if (gaymersArr === undefined || gaymersArr === null){
+    return '';
+  }
+
   var arr = [];
+
   for (let k = 0; k < gaymersArr.length; k+=1){
     arr.push(gaymersArr[k]['channelId']);
   }
@@ -666,6 +753,10 @@ function extractChannelIdsFromArrayAsString(gaymersArr){
 }
 
 function extractUniqueGamesFromTwitchStreams(streams){
+  if (streams === undefined || streams === null){
+    return [];
+  }
+
   var set = new Set();
   for (let k = 0; k < streams.length; k+=1){
     set.add(streams[k].game);

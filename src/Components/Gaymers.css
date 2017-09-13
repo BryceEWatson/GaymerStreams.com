@@ -10,3 +10,18 @@
   font-size: 28px;
   font-weight: 500;
 }
+
+.status-circle {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  vertical-align: sub;
+}
+.online-circle {
+  background-color: #62bd19;
+}
+.offline-circle {
+  background-color: #ffb700;
+  opacity: 0.5;
+}

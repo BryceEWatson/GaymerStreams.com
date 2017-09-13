@@ -12,12 +12,11 @@ import {
   TOGGLE_SELECTED_GAME,
 
   GET_ALL_GAMES,
-  GET_TWITCH_LIVE_STREAMS,
-  GET_TWITCH_LIVE_STREAMS_REQUEST,
-  GET_TWITCH_LIVE_STREAMS_FAILURE,
-  GET_TWITCH_LIVE_STREAMS_SUCCESS,
-  // GET_GAYMERS_FOR_GAME,
-  // SET_SELECTED_GAME,
+
+  GET_TWITCH_LIVE_STREAMS, GET_TWITCH_LIVE_STREAMS_REQUEST, GET_TWITCH_LIVE_STREAMS_FAILURE, GET_TWITCH_LIVE_STREAMS_SUCCESS,
+
+  UPDATE_GAYMER_ONLINE_STATUS_REQUEST, UPDATE_GAYMER_ONLINE_STATUS_COMPLETE,
+
   SET_GAME_FILTER,
   GameFilters } from '../Actions/Actions';
 
@@ -100,8 +99,9 @@ export function addGaymer(state = {
  */
 export function getGaymers(state = {
   isFetching: false,
-  status: undefined,
   isSuccess: false,
+  hasError: false,
+  status: undefined,
   gaymers: []
    }, action){
 
@@ -110,22 +110,46 @@ export function getGaymers(state = {
     case GET_GAYMERS_REQUEST:
       return Object.assign({}, state, {
         isFetching: true,
+        isSuccess: false,
+        hasError: false,
         status: action.status
       });
     case GET_GAYMERS_FAILURE:
       return Object.assign({}, state, {
+        isFetching: false,
+        isSuccess: false,
+        hasError: true,
         status: action.status
       });
     case GET_GAYMERS_SUCCESS:
       return Object.assign({}, state, {
+        isFetching: false,
         isSuccess: true,
+        hasError: false,
         status: action.status,
         gaymers: action.gaymers
       });
     case GET_GAYMERS_EMPTY:
       return Object.assign({}, state, {
+        isFetching: false,
         isSuccess: true,
+        hasError: false,
         status: action.status
+      });
+    case UPDATE_GAYMER_ONLINE_STATUS_REQUEST:
+      return Object.assign({}, state, {
+        isFetching: false,
+        isSuccess: true,
+        hasError: false,
+        status: action.status
+      });
+    case UPDATE_GAYMER_ONLINE_STATUS_COMPLETE:
+      return Object.assign({}, state, {
+        isFetching: false,
+        isSuccess: true,
+        hasError: false,
+        status: action.status,
+        gaymers: action.gaymers
       });
     default:
       return state;

@@ -25,3 +25,6 @@
   background-color: #ffb700;
   opacity: 0.5;
 }
+.gaymers-accordion-body-override{
+  max-height: 100em !important;
+}

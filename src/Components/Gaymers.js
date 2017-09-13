@@ -11,7 +11,7 @@ const Gaymers = ({ status, gaymers }) => (
         <i className="icon icon-arrow-right mr-1"></i>
           <span className="GaymersTitle">Gaymers</span>
       </summary>
-      <div className="accordion-body">
+      <div className="accordion-body gaymers-accordion-body-override">
         <ul className="Gaymers menu menu-nav">
           {gaymers && gaymers.map(gaymer => (
             <li key={gaymer.channelId} className="menu-item">

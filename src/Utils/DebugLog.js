@@ -1,4 +1,4 @@
-var DEBUG = 0;
+var DEBUG = 1;
 
 function DebugLog(msg, param){
   if (!DEBUG) return;

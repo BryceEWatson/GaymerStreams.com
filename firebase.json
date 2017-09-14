@@ -5,6 +5,7 @@
   "hosting": {
     "public": "build",
     "ignore": [
+      "src",
       "firebase.json",
       "**/.*",
       "**/node_modules/**"

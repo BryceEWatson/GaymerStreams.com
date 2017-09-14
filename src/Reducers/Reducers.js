@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import DebugLog from '../Utils/DebugLog';
 
 import {
   ADD_GAYMER, ADD_GAYMER_REQUEST, ADD_GAYMER_FAILURE, ADD_GAYMER_SUCCESS,
@@ -11,6 +12,8 @@ import {
 
   TOGGLE_SELECTED_GAME,
 
+  COMPUTE_STREAM_COUNTS,
+
   GET_ALL_GAMES,
 
   GET_TWITCH_LIVE_STREAMS, GET_TWITCH_LIVE_STREAMS_REQUEST, GET_TWITCH_LIVE_STREAMS_FAILURE, GET_TWITCH_LIVE_STREAMS_SUCCESS,
@@ -20,31 +23,6 @@ import {
   SET_GAME_FILTER,
   GameFilters } from '../Actions/Actions';
 
-/*
- * define initial state
- */
-// const initialState = {
-//   addGaymer: {
-//     isFetching: false,
-//     isSuccess: false,
-//     status: undefined,
-//     gaymerName: undefined,
-//     gaymerId: undefined,
-//     streamPlatform: 'Twitch'
-//   },
-//   getGaymers: {
-//     isFetching: false,
-//     isSuccess: false,
-//     status: undefined,
-//     gaymers: []
-//   }
-//
-//   gaymersForSelectedGame: [],
-//   selectedGame: 'Overwatch',
-//   allGamesList: [],
-//   liveGamesList: [],
-//   gameFilter: GameFilters.SORT_BY_MOST_VIEWERS
-// }
 
 /*
  * reduces gaymersForSelectedGame
@@ -198,12 +176,37 @@ export function getGames(state = {
         isSuccess: true,
         games: setSelectedGame(action.game, action.games)
       });
+    case COMPUTE_STREAM_COUNTS:
+      return Object.assign({}, state, {
+        isFetching: false,
+        status: action.status,
+        isSuccess: true,
+        games: computeStreamCountsForGames(action.games, action.liveStreams)
+      })
+      break;
+
     default:
       return state;
   }
 }
 
+function computeStreamCountsForGames(games, liveStreams){
+  DebugLog('computeStreamCountsForGames games', games);
+  DebugLog('computeStreamCountsForGames, liveStreams', liveStreams);
 
+  for (let i = 0; i < games.length; i+=1){
+    let game = games[i];
+    game['streamerCount'] = 0;
+    for (let j = 0; j < liveStreams.length; j+=1){
+      let liveStream = liveStreams[j];
+      if (game.name === liveStream.game){
+        game['streamerCount'] += 1;
+      }
+    }
+  }
+
+  return games;
+}
 
 function setSelectedGame(game, games){
   let arr = [];

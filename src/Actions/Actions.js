@@ -53,6 +53,8 @@ export const FILTER_TWITCH_STREAMS_EMPTY = 'FILTER_TWITCH_STREAMS_EMPTY';
 
 export const TOGGLE_SELECTED_GAME = 'TOGGLE_SELECTED_GAME';
 
+export const COMPUTE_STREAM_COUNTS = 'COMPUTE_STREAM_COUNTS';
+
 export const GET_ALL_GAMES = 'GET_ALL_GAMES';
 export const GET_GAYMERS_FOR_GAME = 'GET_GAYMERS_FOR_GAME';
 export const SET_SELECTED_GAME = 'SET_SELECTED_GAME';
@@ -108,7 +110,7 @@ export const GameFilters = {
           }
       )
       .then((json) => {
-          DebugLog('fetchTwitchIdFromName RESPONSE', json);
+          // DebugLog('fetchTwitchIdFromName RESPONSE', json);
 
           if (!json || !json.users || !json.users[0] || !json.users[0]._id){
             return dispatch(addGaymerFailure(twitchName, 'Twitch', 'Twitch user ' + twitchName + ' does not exist'));
@@ -153,7 +155,7 @@ export function fetchGaymers() {
 
     return FirebaseUtil.getFirebase().database().ref('gaymers').on('value', (gaymersSnap) => {
       let gaymersSnapshot = gaymersSnap.val();
-      DebugLog('fetchGaymers', gaymersSnapshot);
+      // DebugLog('fetchGaymers', gaymersSnapshot);
 
       if (gaymersSnapshot){
         var arr = Object.values(gaymersSnapshot);
@@ -175,26 +177,26 @@ export function fetchGaymers() {
  * fetch games
  */
 export function fetchGames() {
-  return function (dispatch) {
+  return function (dispatch, getState) {
     dispatch(getGamesRequest());
     return FirebaseUtil.getFirebase().database().ref('games').on('value', (gamesSnap) => {
         let gamesSnapshot = gamesSnap.val();
-        DebugLog('gamesSnapshot', gamesSnapshot);
+        // DebugLog('gamesSnapshot', gamesSnapshot);
         if (gamesSnapshot){
 
           // sort games
           let arr = Object.values(gamesSnapshot);
 
-          DebugLog('before sort', arr);
+          // DebugLog('before sort', arr);
           arr.sort(function(a,b){
             return a['name'].toLowerCase().localeCompare(b['name'].toLowerCase());
           });
-          DebugLog('after sort', arr);
+          // DebugLog('after sort', arr);
 
           // move "All Games" to the top of the list
-          DebugLog('before move', arr);
+          // DebugLog('before move', arr);
           promote('All Games', arr);
-          DebugLog('moved all games to front of list',arr);
+          // DebugLog('moved all games to front of list',arr);
 
           dispatch(getGamesSuccess(arr));
         } else {
@@ -203,6 +205,15 @@ export function fetchGames() {
       }, (err) => {
       dispatch(getGamesFailure(err));
     });
+  }
+}
+
+export function computeStreamCounts(liveStreams, games){
+  return {
+    type: COMPUTE_STREAM_COUNTS,
+    status: 'Computing stream counts...',
+    games,
+    liveStreams
   }
 }
 
@@ -248,7 +259,7 @@ export function fetchTwitchLiveStreams(game, channelIds) {
       url += 'channel=' + channelIds;
     }
 
-    DebugLog('URL', url);
+    // DebugLog('URL', url);
 
     return fetch(url, twitchApiGetOptions)
       .then(response => response.json(),
@@ -263,12 +274,14 @@ export function fetchTwitchLiveStreams(game, channelIds) {
           dispatch(getTwitchLiveStreamsSuccess(game, channelIds, json.streams));
 
           //cross reference channelIds with streamers and update gaymers list
-          const { getGaymers } = getState();
-          DebugLog('fetchTwitchLiveStreams json.streams', json.streams);
-          DebugLog('fetchTwitchLiveStreams getGaymers', getGaymers.gaymers);
+          const { getGaymers, getGames, twitchLiveStreamsList } = getState();
+          // DebugLog('fetchTwitchLiveStreams json.streams', json.streams);
+          // DebugLog('fetchTwitchLiveStreams getGaymers', getGaymers.gaymers);
           dispatch(updateGaymerOnlineStatusRequest());
           let gaymers = setGaymersOnlineStatus(getGaymers.gaymers, json.streams);
           dispatch(updateGaymerOnlineStatusComplete(gaymers));
+
+          dispatch(computeStreamCounts(twitchLiveStreamsList.liveStreams, getGames.games));
 
           let liveGamesSet = extractUniqueGamesFromTwitchStreams(json.streams);
 
@@ -284,19 +297,19 @@ function setGaymersOnlineStatus(gaymers, streams){
   if (gaymers === undefined || gaymers === null || gaymers.length === 0) return;
   if (streams === undefined || streams === null) return;
 
-  DebugLog('BEFORE gaymers', gaymers);
-  DebugLog('BEFORE streams', streams);
+  // DebugLog('BEFORE gaymers', gaymers);
+  // DebugLog('BEFORE streams', streams);
 
   for (let i=0; i<gaymers.length; i+=1){
     for (let j=0; j<streams.length; j+=1){
-      DebugLog(gaymers[i]['channelId'], streams[j].channel._id);
+      // DebugLog(gaymers[i]['channelId'], streams[j].channel._id);
       if (gaymers[i]['channelId'] == streams[j].channel._id){
         gaymers[i]['status'] = 'Online';
       }
     }
   }
 
-  DebugLog('AFTER gaymers', gaymers);
+  // DebugLog('AFTER gaymers', gaymers);
   return gaymers;
 }
 
@@ -321,27 +334,27 @@ export function updateGaymerOnlineStatusComplete(gaymers){
 export function storeGames(liveGames) {
   return function(dispatch) {
     dispatch(setGamesRequest());
-    DebugLog('liveGames', liveGames);
+    // DebugLog('liveGames', liveGames);
     if (liveGames) { //if there are any live games to record in database
       let gamesRef = FirebaseUtil.getFirebase().database().ref('games');
 
       gamesRef.once('value').then((gamesSnap)=>{
         let existingGames = gamesSnap.val();
-        DebugLog('existingGames', existingGames);
+        // DebugLog('existingGames', existingGames);
 
         let updates = {}
         if (existingGames) {
           for (let k = 0; k < liveGames.length; k += 1) {
             //only write if liveGames[k] key not in existingGames
-            if (!(liveGames[k] in existingGames)){
-              DebugLog('key ' + liveGames[k] + ' not in, therefore, write');
-              updates['/' + liveGames[k]] = { name: liveGames[k] };
+            if (!(liveGames[k].replace('/','-') in existingGames)){
+              // DebugLog('key ' + liveGames[k].replace('/','-') + ' not in, therefore, write');
+              updates['/' + liveGames[k].replace('/','-')] = { name: liveGames[k] };
             }
           }
         } else { //no games yet in database
-          DebugLog('no games yet, adding');
+          // DebugLog('no games yet, adding');
           for (let k = 0; k < liveGames.length; k+=1){
-            updates['/' + liveGames[k]] = { name: liveGames[k] };
+            updates['/' + liveGames[k].replace('/','-')] = { name: liveGames[k] };
           }
         }
 
@@ -647,10 +660,10 @@ export function filterTwitchStreamsByGame(game){
   return (dispatch, getState) => {
     const { twitchLiveStreamsList, getGaymers, getGames } = getState();
 
-    DebugLog('getState',getState());
-    DebugLog('twitchLiveStreamsList',twitchLiveStreamsList);
-    DebugLog('getGaymers',getGaymers);
-    DebugLog('getGames',getGames);
+    // DebugLog('getState',getState());
+    // DebugLog('twitchLiveStreamsList',twitchLiveStreamsList);
+    // DebugLog('getGaymers',getGaymers);
+    // DebugLog('getGames',getGames);
 
     //update filter ui
     dispatch(toggleSelectedGame(game, getGames.games));

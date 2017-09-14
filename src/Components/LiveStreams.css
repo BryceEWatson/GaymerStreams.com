@@ -12,7 +12,8 @@
   color: inherit;
   text-decoration: none;
   outline: 0;
-  -moz-outline-style: none
+  -moz-outline-style: none;
+  margin-bottom: 0.8em;
 }
 
 .LiveStreamsContainer{
@@ -24,4 +25,26 @@
 .livestreams-img-responsive-override{
   width: 100% !important;
   min-width: 100% !important;
+}
+
+.livestreams-display-name{
+  font-size: 0.95em;
+  font-weight: 300;
+}
+
+.livestreams-game-name-streaming{
+  font-weight: 300;  
+}
+
+.livestreams-game-name{
+  font-size: 0.9em;
+}
+
+.livestreams-viewers{
+  font-size: 0.9em;
+}
+
+.livestreams-blockquote{
+  font-size: 0.85em;
+  font-weight: 300;
 }

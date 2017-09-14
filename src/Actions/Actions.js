@@ -55,9 +55,7 @@ export const TOGGLE_SELECTED_GAME = 'TOGGLE_SELECTED_GAME';
 
 export const COMPUTE_STREAM_COUNTS = 'COMPUTE_STREAM_COUNTS';
 
-export const GET_ALL_GAMES = 'GET_ALL_GAMES';
 export const GET_GAYMERS_FOR_GAME = 'GET_GAYMERS_FOR_GAME';
-export const SET_SELECTED_GAME = 'SET_SELECTED_GAME';
 export const SET_GAME_FILTER = 'SET_GAME_FILTER';
 
 /*
@@ -179,9 +177,15 @@ export function fetchGaymers() {
 export function fetchGames() {
   return function (dispatch, getState) {
     dispatch(getGamesRequest());
+
+    const { getGames } = getState();
+    // diff between state games and database games
+
+    DebugLog('fetchGames BEFORE FIREBASE getGames', getGames)
+
     return FirebaseUtil.getFirebase().database().ref('games').on('value', (gamesSnap) => {
         let gamesSnapshot = gamesSnap.val();
-        // DebugLog('gamesSnapshot', gamesSnapshot);
+        DebugLog('fetchGames AFTER FIREBASE', gamesSnapshot);
         if (gamesSnapshot){
 
           // sort games
@@ -277,6 +281,7 @@ export function fetchTwitchLiveStreams(game, channelIds) {
           const { getGaymers, getGames, twitchLiveStreamsList } = getState();
           // DebugLog('fetchTwitchLiveStreams json.streams', json.streams);
           // DebugLog('fetchTwitchLiveStreams getGaymers', getGaymers.gaymers);
+          DebugLog('GOT HERE???');
           dispatch(updateGaymerOnlineStatusRequest());
           let gaymers = setGaymersOnlineStatus(getGaymers.gaymers, json.streams);
           dispatch(updateGaymerOnlineStatusComplete(gaymers));
@@ -294,15 +299,16 @@ export function fetchTwitchLiveStreams(game, channelIds) {
 }
 
 function setGaymersOnlineStatus(gaymers, streams){
-  if (gaymers === undefined || gaymers === null || gaymers.length === 0) return;
-  if (streams === undefined || streams === null) return;
+  DebugLog('SET GAYMER ONLINE STATUS???');
+  // if (gaymers === undefined || gaymers === null || gaymers.length === 0) return gaymers;
+  // if (streams === undefined || streams === null) return gaymers;
 
   // DebugLog('BEFORE gaymers', gaymers);
   // DebugLog('BEFORE streams', streams);
 
   for (let i=0; i<gaymers.length; i+=1){
     for (let j=0; j<streams.length; j+=1){
-      // DebugLog(gaymers[i]['channelId'], streams[j].channel._id);
+      DebugLog(typeof gaymers[i]['channelId'], typeof streams[j].channel._id);
       if (gaymers[i]['channelId'] == streams[j].channel._id){
         gaymers[i]['status'] = 'Online';
       }
@@ -626,15 +632,6 @@ export function getGaymersForGame(game){
   }
 }
 
-/*
- * generates the SET_SELECTED_GAME action
- */
-export function setSelectedGame(game){
-  return {
-    type: SET_SELECTED_GAME,
-    game
-  }
-}
 
 /*
  * generates the SET_GAME_FILTER action
@@ -645,16 +642,6 @@ export function setGameFilter(filter){
     filter
   }
 }
-
-/*
- * generates the GET_ALL_GAMES action
- */
-export function getAllGames(){
-  return {
-    type: GET_ALL_GAMES
-  }
-}
-
 
 export function filterTwitchStreamsByGame(game){
   return (dispatch, getState) => {

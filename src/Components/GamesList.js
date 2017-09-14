@@ -16,10 +16,13 @@ const GamesList = ({ status, games, onClickGame }) => (
 
       <div className="filter-nav">
         {games && games.map(game => (
-          <label key={game.name} className={`chip ${game.selected ? 'chip-selected' : ''}`}
-          htmlFor={`tag-${game.name.replace(/\s/g,'')}`}
-          onClick={(e) => onClickGame(game.name, e)}>
-          {game.name}</label>
+          <label key={game.name} className={`chip ${game.selected ? 'chip-selected' : ''}
+            ${game.streamerCount === 0 ? '' : 'badge'}`}
+            data-badge={game.streamerCount}
+            htmlFor={`tag-${game.name.replace(/\s/g,'')}`}
+            onClick={(e) => onClickGame(game.name, e)}>
+            {game.name}
+          </label>
         ))}
       </div>
     </div>

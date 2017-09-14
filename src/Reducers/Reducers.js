@@ -170,11 +170,13 @@ export function getGames(state = {
         status: action.status
       });
     case TOGGLE_SELECTED_GAME:
+
+      DebugLog('state.games', state.games);
       return Object.assign({}, state, {
         isFetching: false,
         status: action.status,
         isSuccess: true,
-        games: setSelectedGame(action.game, action.games)
+        games: setSelectedGame(action.game, state.games)
       });
     case COMPUTE_STREAM_COUNTS:
       return Object.assign({}, state, {
@@ -209,6 +211,7 @@ function computeStreamCountsForGames(games, liveStreams){
 }
 
 function setSelectedGame(game, games){
+  DebugLog('setSelectedGame', games);
   let arr = [];
   for (let k = 0; k < games.length; k+=1){
     let g = games[k];
@@ -249,7 +252,7 @@ export function setGames(state = {
         isFetching: false,
         isSuccess: true,
         status: action.status,
-        games: action.games
+        games: computeStreamCountsForGames(action.games, action.liveStreams)
       });
     default:
       return state;
@@ -278,21 +281,6 @@ export function selectedGame(state = 'Overwatch', action){
   // TODO: Implement
   // For now, don't handle any actions and just return the state given to us.
   return state;
-}
-
-/*
- * reduces allGamesList
- */
-export function allGamesList(state = [], action){
-  // console.log('allGamesList reducer state:', state);
-  // console.log('allGamesList reducer action:', action);
-
-  switch (action.type){
-    case GET_ALL_GAMES:
-      return ['game1', 'game2']; //FIXME: MOCK, call API
-    default:
-      return state;
-  }
 }
 
 /*
@@ -353,7 +341,6 @@ const GaymerBearsAppReducer = combineReducers({
   getGames,
   gaymersForSelectedGame,
   selectedGame,
-  allGamesList,
   twitchLiveStreamsList,
   gameFilter
 });

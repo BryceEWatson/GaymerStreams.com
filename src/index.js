@@ -7,7 +7,7 @@ import { createStore, applyMiddleware } from 'redux';
 import GaymerBearsAppReducer from './Reducers/Reducers';
 import { createLogger } from 'redux-logger';
 import thunkMiddleware from 'redux-thunk';
-import { fetchGaymers, fetchGames, computeStreamCounts } from './Actions/Actions';
+import { fetchGaymers, fetchGames } from './Actions/Actions';
 
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';

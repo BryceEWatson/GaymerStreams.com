@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import DebugLog from '../Utils/DebugLog';
+import DebugLog from '../Utils///DebugLog';
 
 import {
   ADD_GAYMER, ADD_GAYMER_REQUEST, ADD_GAYMER_FAILURE, ADD_GAYMER_SUCCESS,
@@ -13,8 +13,6 @@ import {
   TOGGLE_SELECTED_GAME,
 
   COMPUTE_STREAM_COUNTS,
-
-  GET_ALL_GAMES,
 
   GET_TWITCH_LIVE_STREAMS, GET_TWITCH_LIVE_STREAMS_REQUEST, GET_TWITCH_LIVE_STREAMS_FAILURE, GET_TWITCH_LIVE_STREAMS_SUCCESS,
 
@@ -139,24 +137,31 @@ export function getGaymers(state = {
  */
 export function getGames(state = {
   isFetching: false,
-  status: undefined,
   isSuccess: false,
+  status: undefined,
   games: []
   }, action){
 
+  //DebugLog('*****GETGAMES getGames', state);
   switch(action.type){
     case GET_GAMES:
     case GET_GAMES_REQUEST:
       return Object.assign({}, state, {
         isFetching: true,
-        status: action.status
+        isSuccess: false,
+        status: action.status,
+        games: []
       });
     case GET_GAMES_FAILURE:
       return Object.assign({}, state, {
         isFetching: false,
-        status: action.status
+        isSuccess: false,
+        status: action.status,
+        games: []
       });
     case GET_GAMES_SUCCESS:
+      //DebugLog('GET_GAMES_SUCCESS', action.games);
+
       return Object.assign({}, state, {
         isFetching: false,
         isSuccess: true,
@@ -167,22 +172,23 @@ export function getGames(state = {
       return Object.assign({}, state, {
         isFetching: false,
         isSuccess: true,
-        status: action.status
+        status: action.status,
+        games: []
       });
     case TOGGLE_SELECTED_GAME:
 
-      DebugLog('state.games', state.games);
+      //DebugLog('TOGGLE_SELECTED_GAME', state.games);
       return Object.assign({}, state, {
         isFetching: false,
-        status: action.status,
         isSuccess: true,
+        status: action.status,
         games: setSelectedGame(action.game, state.games)
       });
     case COMPUTE_STREAM_COUNTS:
       return Object.assign({}, state, {
         isFetching: false,
-        status: action.status,
         isSuccess: true,
+        status: action.status,
         games: computeStreamCountsForGames(action.games, action.liveStreams)
       })
       break;
@@ -193,8 +199,11 @@ export function getGames(state = {
 }
 
 function computeStreamCountsForGames(games, liveStreams){
-  DebugLog('computeStreamCountsForGames games', games);
-  DebugLog('computeStreamCountsForGames, liveStreams', liveStreams);
+  //DebugLog('*****computeStreamCountsForGames games', games);
+  //DebugLog('computeStreamCountsForGames, liveStreams', liveStreams);
+
+  if (games === null || games === undefined || games.length === 0) return games;
+  if (liveStreams === null || liveStreams === undefined || liveStreams.length === 0) return games;
 
   for (let i = 0; i < games.length; i+=1){
     let game = games[i];
@@ -207,11 +216,11 @@ function computeStreamCountsForGames(games, liveStreams){
     }
   }
 
+  DebugLog('*****computeStreamCountsForGames games',games);
   return games;
 }
 
 function setSelectedGame(game, games){
-  DebugLog('setSelectedGame', games);
   let arr = [];
   for (let k = 0; k < games.length; k+=1){
     let g = games[k];
@@ -222,6 +231,7 @@ function setSelectedGame(game, games){
     }
     arr.push(g);
   }
+  DebugLog('*****setSelectedGame', games);
   return arr;
 }
 
@@ -230,29 +240,35 @@ function setSelectedGame(game, games){
  */
 export function setGames(state = {
   isFetching: false,
-  status: undefined,
   isSuccess: false,
+  status: undefined,
   games: []
    }, action){
 
+  //DebugLog('*****SET GAMES', state);
   switch(action.type){
     case SET_GAMES:
     case SET_GAMES_REQUEST:
       return Object.assign({}, state, {
         isFetching: true,
-        status: action.status
+        isSuccess: false,
+        status: action.status,
+        games: []
       });
     case SET_GAMES_FAILURE:
       return Object.assign({}, state, {
         isFetching: false,
-        status: action.status
+        isSuccess: false,
+        status: action.status,
+        games: []
       });
     case SET_GAMES_SUCCESS:
+      DebugLog('SET_GAMES_SUCCESS state.games', state.games)
       return Object.assign({}, state, {
         isFetching: false,
         isSuccess: true,
         status: action.status,
-        games: computeStreamCountsForGames(action.games, action.liveStreams)
+        games: computeStreamCountsForGames(state.games, action.liveStreams)
       });
     default:
       return state;

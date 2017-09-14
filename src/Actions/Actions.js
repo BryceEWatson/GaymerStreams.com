@@ -175,6 +175,9 @@ export function fetchGaymers() {
  * fetch games
  */
 export function fetchGames() {
+
+  DebugLog('fetchGames');
+
   return function (dispatch, getState) {
     dispatch(getGamesRequest());
 
@@ -281,11 +284,12 @@ export function fetchTwitchLiveStreams(game, channelIds) {
           const { getGaymers, getGames, twitchLiveStreamsList } = getState();
           // DebugLog('fetchTwitchLiveStreams json.streams', json.streams);
           // DebugLog('fetchTwitchLiveStreams getGaymers', getGaymers.gaymers);
-          DebugLog('GOT HERE???');
+
           dispatch(updateGaymerOnlineStatusRequest());
           let gaymers = setGaymersOnlineStatus(getGaymers.gaymers, json.streams);
           dispatch(updateGaymerOnlineStatusComplete(gaymers));
 
+          DebugLog('fetchTwitchLiveStreams getGames.games', getGames.games)
           dispatch(computeStreamCounts(twitchLiveStreamsList.liveStreams, getGames.games));
 
           let liveGamesSet = extractUniqueGamesFromTwitchStreams(json.streams);
@@ -300,8 +304,8 @@ export function fetchTwitchLiveStreams(game, channelIds) {
 
 function setGaymersOnlineStatus(gaymers, streams){
   DebugLog('SET GAYMER ONLINE STATUS???');
-  // if (gaymers === undefined || gaymers === null || gaymers.length === 0) return gaymers;
-  // if (streams === undefined || streams === null) return gaymers;
+  if (gaymers === undefined || gaymers === null || gaymers.length === 0) return gaymers;
+  if (streams === undefined || streams === null) return gaymers;
 
   // DebugLog('BEFORE gaymers', gaymers);
   // DebugLog('BEFORE streams', streams);
@@ -309,7 +313,7 @@ function setGaymersOnlineStatus(gaymers, streams){
   for (let i=0; i<gaymers.length; i+=1){
     for (let j=0; j<streams.length; j+=1){
       DebugLog(typeof gaymers[i]['channelId'], typeof streams[j].channel._id);
-      if (gaymers[i]['channelId'] == streams[j].channel._id){
+      if (Number(gaymers[i]['channelId']) === streams[j].channel._id){
         gaymers[i]['status'] = 'Online';
       }
     }
@@ -374,7 +378,6 @@ export function storeGames(liveGames) {
         } else {
           dispatch(setGamesSuccess('storeGames: All games in, updates not needed'));
         }
-
       });
     }
   }
@@ -645,12 +648,11 @@ export function setGameFilter(filter){
 
 export function filterTwitchStreamsByGame(game){
   return (dispatch, getState) => {
-    const { twitchLiveStreamsList, getGaymers, getGames } = getState();
 
-    // DebugLog('getState',getState());
-    // DebugLog('twitchLiveStreamsList',twitchLiveStreamsList);
-    // DebugLog('getGaymers',getGaymers);
-    // DebugLog('getGames',getGames);
+    console.log('*****filterTwitchStreamsByGame getState', getState());
+    const { getGaymers, getGames } = getState();
+
+    DebugLog('filterTwitchStreamsByGame getGames',getGames);
 
     //update filter ui
     dispatch(toggleSelectedGame(game, getGames.games));

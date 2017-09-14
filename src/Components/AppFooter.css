@@ -2,3 +2,19 @@
   padding: 0.8em 1.2em;
   margin-top: 1.5em;
 }
+
+@media (max-width: 1280px) {
+}
+@media (max-width: 960px) {
+
+}
+@media (max-width: 840px) {
+  .app-footer-navbar-right-section-override{
+    justify-content: flex-start !important;
+  }
+}
+@media (max-width: 600px) {
+}
+@media (max-width: 480px) {
+
+}

@@ -1,4 +1,4 @@
-var DEBUG = 1;
+var DEBUG = process.env.NODE_ENV !== 'production';
 
 function DebugLog(msg, param){
   if (!DEBUG) return;

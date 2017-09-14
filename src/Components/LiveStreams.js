@@ -3,6 +3,9 @@ import './LiveStreams.css'
 
 const LiveStreams = ({ isFetching, status, liveStreams, game }) => {
 
+
+  
+
   return (
     <section className="LiveStreamsSection">
 

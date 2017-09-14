@@ -686,7 +686,6 @@ export function setGameFilter(filter){
 export function filterTwitchStreamsByGame(game){
   return (dispatch, getState) => {
 
-    console.log('*****filterTwitchStreamsByGame getState', getState());
     const { getGaymers, getGames, twitchLiveStreamsList } = getState();
 
     DebugLog('filterTwitchStreamsByGame getGames',getGames);

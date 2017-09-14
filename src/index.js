@@ -18,13 +18,23 @@ import './Styles/spectre-exp.min.css';
 
 import FirebaseUtil from './Utils/InitializeFirebase';
 
-let store = createStore(
-  GaymerBearsAppReducer,
-  applyMiddleware(
-    thunkMiddleware, // lets us dispatch() functions
-    createLogger() // neat middleware that logs actions
-  )
-);
+let store;
+if (process.env.NODE_ENV === 'production'){
+  store = createStore(
+    GaymerBearsAppReducer,
+    applyMiddleware(
+      thunkMiddleware // lets us dispatch() functions
+    )
+  );
+} else {
+  store = createStore(
+    GaymerBearsAppReducer,
+    applyMiddleware(
+      thunkMiddleware, // lets us dispatch() functions
+      createLogger() // neat middleware that logs actions
+    )
+  );
+}
 
 
 FirebaseUtil.init();

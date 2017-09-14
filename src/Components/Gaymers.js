@@ -18,7 +18,7 @@ const Gaymers = ({ status, gaymers }) => (
 
             {gaymers && gaymers.map(gaymer => (
 
-              <div key={gaymer.gaymerName} className="column col-3">
+              <div key={gaymer.gaymerName} className="column col-2 col-xl-2 col-lg-3 col-md-4 col-sm-4 col-xs-6">
                 <div className={`status-circle ${gaymer.status && gaymer.status === 'Online' ? 'online-circle' : 'offline-circle'}`}></div>
 
                 <a className="" target="_blank" href={`https://www.twitch.tv/${gaymer.gaymerName}`}>

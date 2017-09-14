@@ -30,6 +30,9 @@ export const GET_TWITCH_LIVE_STREAMS = 'GET_TWITCH_LIVE_STREAMS';
 export const GET_TWITCH_LIVE_STREAMS_REQUEST = 'GET_TWITCH_LIVE_STREAMS_REQUEST';
 export const GET_TWITCH_LIVE_STREAMS_FAILURE = 'GET_TWITCH_LIVE_STREAMS_FAILURE';
 export const GET_TWITCH_LIVE_STREAMS_SUCCESS = 'GET_TWITCH_LIVE_STREAMS_SUCCESS';
+export const GET_TWITCH_LIVE_STREAMS_EMPTY = 'GET_TWITCH_LIVE_STREAMS_EMPTY';
+
+export const GET_TWITCH_LIVE_STREAMS_BY_GAME_SUCCESS = 'GET_TWITCH_LIVE_STREAMS_BY_GAME_SUCCESS';
 
 export const UPDATE_GAYMER_ONLINE_STATUS_REQUEST = 'UPDATE_GAYMER_ONLINE_STATUS_REQUEST';
 export const UPDATE_GAYMER_ONLINE_STATUS_COMPLETE = 'UPDATE_GAYMER_ONLINE_STATUS_COMPLETE';
@@ -215,7 +218,7 @@ export function fetchGames() {
   }
 }
 
-export function computeStreamCounts(liveStreams, games){
+export function computeStreamCounts(games, liveStreams){
   return {
     type: COMPUTE_STREAM_COUNTS,
     status: 'Computing stream counts...',
@@ -258,15 +261,15 @@ export function fetchTwitchLiveStreams(game, channelIds) {
     let url = 'https://api.twitch.tv/kraken/streams/?';
     game = game === 'All Games' ? undefined : game;
     if (game) { // get live streams for a particular game only
-      url += 'game=' + game;
+      url += 'game=' + encodeURIComponent(game);
       if (channelIds) { // should be defined if game is defined
-        url += '&channel=' + channelIds;
+        url += '&channel=' + encodeURIComponent(channelIds);
       }
     } else if (channelIds){ //get live streams for gaymers on file, any games
-      url += 'channel=' + channelIds;
+      url += 'channel=' + encodeURIComponent(channelIds);
     }
 
-    // DebugLog('URL', url);
+    DebugLog('URL', url);
 
     return fetch(url, twitchApiGetOptions)
       .then(response => response.json(),
@@ -278,29 +281,46 @@ export function fetchTwitchLiveStreams(game, channelIds) {
           }
       )
       .then((json) => {
-          dispatch(getTwitchLiveStreamsSuccess(game, channelIds, json.streams));
 
-          //cross reference channelIds with streamers and update gaymers list
-          const { getGaymers, getGames, twitchLiveStreamsList } = getState();
-          // DebugLog('fetchTwitchLiveStreams json.streams', json.streams);
-          // DebugLog('fetchTwitchLiveStreams getGaymers', getGaymers.gaymers);
+          DebugLog('sth fucking up here json.streams!!!',json.streams);
 
-          dispatch(updateGaymerOnlineStatusRequest());
-          let gaymers = setGaymersOnlineStatus(getGaymers.gaymers, json.streams);
-          dispatch(updateGaymerOnlineStatusComplete(gaymers));
+          // DIFFERENTIATE between STREAMS FOR ALL GAMES vs STREAMS FOR A SELECTED GAME
 
-          DebugLog('fetchTwitchLiveStreams getGames.games', getGames.games)
-          dispatch(computeStreamCounts(twitchLiveStreamsList.liveStreams, getGames.games));
 
-          let liveGamesSet = extractUniqueGamesFromTwitchStreams(json.streams);
+          if (Boolean(game)) { //STREAMS FOR A SELECTED GAME
+            // stream is filtered by game, do not overwrite existing liveStreams
+            dispatch(getTwitchLiveStreamsByGameSuccess(game, json.streams));
 
-          if (liveGamesSet){
-            dispatch(storeGames(liveGamesSet));
+          } else { // streams for all games
+
+            dispatch(getTwitchLiveStreamsSuccess(channelIds, json.streams));
+
+            //cross reference channelIds with streamers and update gaymers list
+            const { getGaymers, getGames } = getState();
+            // DebugLog('fetchTwitchLiveStreams json.streams', json.streams);
+            // DebugLog('fetchTwitchLiveStreams getGaymers', getGaymers.gaymers);
+
+            dispatch(updateGaymerOnlineStatusRequest());
+            let gaymers = setGaymersOnlineStatus(getGaymers.gaymers, json.streams);
+            dispatch(updateGaymerOnlineStatusComplete(gaymers));
+
+            DebugLog('*****fetchTwitchLiveStreams getGames.games', getGames.games)
+            DebugLog('*****fetchTwitchLiveStreams json.streams', json.streams)
+
+            dispatch(computeStreamCounts(getGames.games, json.streams));
+
+            let liveGamesSet = extractUniqueGamesFromTwitchStreams(json.streams);
+
+            if (liveGamesSet){
+              dispatch(storeGames(liveGamesSet));
+            }
           }
         }
       );
   }
 }
+
+
 
 function setGaymersOnlineStatus(gaymers, streams){
   DebugLog('SET GAYMER ONLINE STATUS???');
@@ -523,13 +543,30 @@ export function getTwitchLiveStreamsFailure(game, channelIds, error){
 /*
  * generates the GET_TWITCH_LIVE_STREAMS_SUCCESS action
  */
-export function getTwitchLiveStreamsSuccess(game, channelIds, liveStreams){
+export function getTwitchLiveStreamsSuccess(channelIds, liveStreams){
   return {
     type: GET_TWITCH_LIVE_STREAMS_SUCCESS,
     status: 'Successfully retrieved live streams.',
+    liveStreamsForGame: undefined,
     liveStreams,
-    game,
+    game: undefined,
     channelIds
+  }
+}
+
+export function getTwitchLiveStreamsEmpty(status){
+  return {
+    type: GET_TWITCH_LIVE_STREAMS_EMPTY,
+    status
+  }
+}
+
+export function getTwitchLiveStreamsByGameSuccess(game, liveStreamsForGame){
+  return {
+    type: GET_TWITCH_LIVE_STREAMS_BY_GAME_SUCCESS,
+    status: 'Successfully retrieved streams for '+game,
+    game,
+    liveStreamsForGame
   }
 }
 
@@ -650,11 +687,13 @@ export function filterTwitchStreamsByGame(game){
   return (dispatch, getState) => {
 
     console.log('*****filterTwitchStreamsByGame getState', getState());
-    const { getGaymers, getGames } = getState();
+    const { getGaymers, getGames, twitchLiveStreamsList } = getState();
 
     DebugLog('filterTwitchStreamsByGame getGames',getGames);
 
     //update filter ui
+
+    dispatch(computeStreamCounts(getGames.games, twitchLiveStreamsList.liveStreams));
     dispatch(toggleSelectedGame(game, getGames.games));
 
     let channels = extractChannelIdsFromArrayAsString(getGaymers.gaymers);

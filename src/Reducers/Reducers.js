@@ -14,8 +14,9 @@ import {
 
   COMPUTE_STREAM_COUNTS,
 
-  GET_TWITCH_LIVE_STREAMS, GET_TWITCH_LIVE_STREAMS_REQUEST, GET_TWITCH_LIVE_STREAMS_FAILURE, GET_TWITCH_LIVE_STREAMS_SUCCESS,
-
+  GET_TWITCH_LIVE_STREAMS, GET_TWITCH_LIVE_STREAMS_REQUEST, GET_TWITCH_LIVE_STREAMS_FAILURE, GET_TWITCH_LIVE_STREAMS_SUCCESS, GET_TWITCH_LIVE_STREAMS_EMPTY,
+  GET_TWITCH_LIVE_STREAMS_BY_GAME_SUCCESS,
+  
   UPDATE_GAYMER_ONLINE_STATUS_REQUEST, UPDATE_GAYMER_ONLINE_STATUS_COMPLETE,
 
   SET_GAME_FILTER,
@@ -160,8 +161,6 @@ export function getGames(state = {
         games: []
       });
     case GET_GAMES_SUCCESS:
-      //DebugLog('GET_GAMES_SUCCESS', action.games);
-
       return Object.assign({}, state, {
         isFetching: false,
         isSuccess: true,
@@ -177,7 +176,7 @@ export function getGames(state = {
       });
     case TOGGLE_SELECTED_GAME:
 
-      //DebugLog('TOGGLE_SELECTED_GAME', state.games);
+      DebugLog('TOGGLE_SELECTED_GAME', state);
       return Object.assign({}, state, {
         isFetching: false,
         isSuccess: true,
@@ -185,6 +184,7 @@ export function getGames(state = {
         games: setSelectedGame(action.game, state.games)
       });
     case COMPUTE_STREAM_COUNTS:
+      DebugLog('%%%REDUCER COMPUTE_STREAM_COUNTS', action);
       return Object.assign({}, state, {
         isFetching: false,
         isSuccess: true,
@@ -199,11 +199,17 @@ export function getGames(state = {
 }
 
 function computeStreamCountsForGames(games, liveStreams){
-  //DebugLog('*****computeStreamCountsForGames games', games);
-  //DebugLog('computeStreamCountsForGames, liveStreams', liveStreams);
+  DebugLog('*****computeStreamCountsForGames games', games);
+  DebugLog('computeStreamCountsForGames, liveStreams', liveStreams);
 
-  if (games === null || games === undefined || games.length === 0) return games;
-  if (liveStreams === null || liveStreams === undefined || liveStreams.length === 0) return games;
+  if (games === null || games === undefined || games.length === 0) {
+    DebugLog('%%%%%RETURNING GAMES games',games);
+    return games;
+  }
+  if (liveStreams === null || liveStreams === undefined || liveStreams.length === 0) {
+    DebugLog('%%%%%RETURNING GAMES liveStreams', liveStreams);
+    return games;
+  }
 
   for (let i = 0; i < games.length; i+=1){
     let game = games[i];
@@ -245,7 +251,6 @@ export function setGames(state = {
   games: []
    }, action){
 
-  //DebugLog('*****SET GAMES', state);
   switch(action.type){
     case SET_GAMES:
     case SET_GAMES_REQUEST:
@@ -267,8 +272,7 @@ export function setGames(state = {
       return Object.assign({}, state, {
         isFetching: false,
         isSuccess: true,
-        status: action.status,
-        games: computeStreamCountsForGames(state.games, action.liveStreams)
+        status: action.status
       });
     default:
       return state;
@@ -306,6 +310,7 @@ export function twitchLiveStreamsList(state = {
     isFetching: false,
     status: undefined,
     isSuccess: false,
+    liveStreamsForGame: [],
     liveStreams: [],
     game: undefined
   }, action){
@@ -324,11 +329,36 @@ export function twitchLiveStreamsList(state = {
         game: action.game
       });
     case GET_TWITCH_LIVE_STREAMS_SUCCESS:
+
+      DebugLog('GET_TWITCH_LIVE_STREAMS_SUCCESS',action);
+
       return Object.assign({}, state, {
         isFetching: false,
         status: action.status,
         isSuccess: true,
         liveStreams: action.liveStreams,
+        game: action.game
+      });
+    case GET_TWITCH_LIVE_STREAMS_EMPTY:
+      DebugLog('GET_TWITCH_LIVE_STREAMS_EMPTY',action);
+
+      return Object.assign({}, state, {
+        isFetching: false,
+        status: action.status,
+        isSuccess: true,
+        liveStreams: [],
+        game: undefined
+      });
+    case GET_TWITCH_LIVE_STREAMS_BY_GAME_SUCCESS:
+      DebugLog('GET_TWITCH_LIVE_STREAMS_BY_GAME_SUCCESS state', state);
+      DebugLog('GET_TWITCH_LIVE_STREAMS_BY_GAME_SUCCESS action', action);
+
+      return Object.assign({}, state, {
+        isFetching: false,
+        status: action.status,
+        isSuccess: true,
+        liveStreamsForGame: action.liveStreamsForGame,
+        liveStreams: state.liveStreams,
         game: action.game
       });
     default:
@@ -355,6 +385,7 @@ const GaymerBearsAppReducer = combineReducers({
   addGaymer,
   getGaymers,
   getGames,
+  setGames,
   gaymersForSelectedGame,
   selectedGame,
   twitchLiveStreamsList,

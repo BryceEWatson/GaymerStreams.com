@@ -17,7 +17,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && rm build/static/js/*.map",
+    "build": "react-scripts build && rm build/static/js/*.map && rm build/static/css/*.map",
     "test": "jest",
     "test:watch": "npm test -- --watch",
     "eject": "react-scripts eject"

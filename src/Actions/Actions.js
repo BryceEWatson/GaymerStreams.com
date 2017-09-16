@@ -376,15 +376,15 @@ export function storeGames(liveGames) {
         if (existingGames) {
           for (let k = 0; k < liveGames.length; k += 1) {
             //only write if liveGames[k] key not in existingGames
-            if (!(liveGames[k].replace('/','-') in existingGames)){
-              // DebugLog('key ' + liveGames[k].replace('/','-') + ' not in, therefore, write');
-              updates['/' + liveGames[k].replace('/','-')] = { name: liveGames[k] };
+            if (!(liveGames[k].replace('/','-').replace('#',' ') in existingGames)){
+              // DebugLog('key ' + liveGames[k].replace('/','-').replace('#',' ') + ' not in, therefore, write');
+              updates['/' + liveGames[k].replace('/','-').replace('#',' ')] = { name: liveGames[k] };
             }
           }
         } else { //no games yet in database
           // DebugLog('no games yet, adding');
           for (let k = 0; k < liveGames.length; k+=1){
-            updates['/' + liveGames[k].replace('/','-')] = { name: liveGames[k] };
+            updates['/' + liveGames[k].replace('/','-').replace('#',' ')] = { name: liveGames[k] };
           }
         }
 

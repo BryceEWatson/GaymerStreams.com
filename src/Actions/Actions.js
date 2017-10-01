@@ -786,7 +786,7 @@ function extractChannelIdsFromArrayAsString(gaymersArr){
 
   var arr = [];
 
-  for (let k = 0; k < gaymersArr.length; k+=1){
+  for (let k = 0; k < 10; k+=1){
     arr.push(gaymersArr[k]['channelId']);
   }
   return arr.join();

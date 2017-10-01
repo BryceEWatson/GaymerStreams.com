@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import App from './App';
+import registerServiceWorker from './registerServiceWorker';
 
 // REDUX
 import { Provider } from 'react-redux';
@@ -9,8 +11,6 @@ import { createLogger } from 'redux-logger';
 import thunkMiddleware from 'redux-thunk';
 import { fetchGaymers, fetchGames } from './Actions/Actions';
 
-import App from './App';
-import registerServiceWorker from './registerServiceWorker';
 import './index.css';
 import './Styles/spectre-icons.min.css';
 import './Styles/spectre.min.css';

@@ -10,7 +10,7 @@ const AddGaymerForm = ({ isFetching, isSuccess, hasError, status, onFormSubmit }
     <section className="AddGaymerFormSection">
       <div className="form-horizontal input-group input-inline AddGaymerFormContainer">
           <div className="form-group">
-            <label className="twitch-gaymer-input-label input-group-addon tooltip"
+            <label className="twitch-gaymer-input-label input-group-addon tooltip tooltip-bottom"
               data-tooltip="Know of a LGBT streamer? Are you a Twitch gaymer?"
               htmlFor="gaymerName">Add Twitch Gaymer</label>
             <input className="form-input input-group-addon twitch-gaymer-input" id="gaymerName" type="text" placeholder="Enter Twitch UserName"
